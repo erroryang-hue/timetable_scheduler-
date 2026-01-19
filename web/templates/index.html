@@ -428,6 +428,17 @@
             Timetable Scheduler
         </h1>
         <p>Create organized schedules with classrooms for your classes</p>
+        
+        <div style="margin-top: 20px;">
+            <label style="font-size: 1.1rem; font-weight: 600; color: #2d3748; margin-right: 10px;">Select Semester:</label>
+            <select id="semester-select" style="padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: 2px solid #667eea; background: white; cursor: pointer;">
+                <option value="1">1st Semester</option>
+                <option value="3" selected>3rd Semester</option>
+                <option value="5">5th Semester</option>
+                <option value="7">7th Semester</option>
+            </select>
+            <button class="btn" style="margin-left: 10px; padding: 10px 20px;" onclick="loadSampleData()">📋 Load Sample Data</button>
+        </div>
     </div>
 
     <div class="input-sections">
@@ -539,6 +550,216 @@ let subjects = [];
 let teachers = [];
 let classrooms = [];
 let commonClasses = [];
+let currentSemester = 3;
+
+// Store data for each semester
+let semesterData = {
+    1: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
+    3: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
+    5: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
+    7: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] }
+};
+
+// Switch semester
+document.getElementById('semester-select').addEventListener('change', function() {
+    // Save current data
+    saveSemesterData();
+    
+    // Load new semester
+    currentSemester = parseInt(this.value);
+    loadSemesterData();
+});
+
+function saveSemesterData() {
+    semesterData[currentSemester] = {
+        classes: [...classes],
+        subjects: [...subjects],
+        teachers: [...teachers],
+        classrooms: [...classrooms],
+        commonClasses: [...commonClasses]
+    };
+}
+
+function loadSemesterData() {
+    const data = semesterData[currentSemester];
+    classes = [...data.classes];
+    subjects = [...data.subjects];
+    teachers = [...data.teachers];
+    classrooms = [...data.classrooms];
+    commonClasses = [...data.commonClasses];
+    
+    // Re-render all lists
+    renderClasses();
+    renderSubjects();
+    renderTeachers();
+    renderClassrooms();
+    renderCommonClasses();
+    
+    // Clear result
+    document.getElementById('result').innerHTML = '';
+}
+
+function loadSampleData() {
+    const sampleData = getSampleDataForSemester(currentSemester);
+    
+    if (confirm(`Load sample data for Semester ${currentSemester}? This will replace current data.`)) {
+        classes = sampleData.classes;
+        subjects = sampleData.subjects;
+        teachers = sampleData.teachers;
+        classrooms = sampleData.classrooms;
+        commonClasses = sampleData.commonClasses;
+        
+        saveSemesterData();
+        loadSemesterData();
+        
+        alert('Sample data loaded successfully!');
+    }
+}
+
+function getSampleDataForSemester(sem) {
+    const samples = {
+        1: {
+            classes: ["CS-A", "CS-B"],
+            subjects: [
+                {name: "Mathematics-I", periods: 5, type: "THEORY"},
+                {name: "Physics", periods: 4, type: "THEORY"},
+                {name: "Physics Lab", periods: 2, type: "LAB"},
+                {name: "Chemistry", periods: 4, type: "THEORY"},
+                {name: "Chemistry Lab", periods: 2, type: "LAB"},
+                {name: "English", periods: 3, type: "THEORY"},
+                {name: "Engineering Graphics", periods: 4, type: "THEORY"},
+                {name: "Programming in C", periods: 3, type: "THEORY"},
+                {name: "C Lab", periods: 2, type: "LAB"}
+            ],
+            teachers: [
+                {name: "Dr. Sharma", subject: "Mathematics-I"},
+                {name: "Dr. Patel", subject: "Physics"},
+                {name: "Dr. Patel", subject: "Physics Lab"},
+                {name: "Dr. Kumar", subject: "Chemistry"},
+                {name: "Dr. Kumar", subject: "Chemistry Lab"},
+                {name: "Prof. Singh", subject: "English"},
+                {name: "Prof. Reddy", subject: "Engineering Graphics"},
+                {name: "Prof. Gupta", subject: "Programming in C"},
+                {name: "Prof. Gupta", subject: "C Lab"}
+            ],
+            classrooms: [
+                {name: "R101", type: "THEORY", subject: null},
+                {name: "R102", type: "THEORY", subject: null},
+                {name: "Physics Lab", type: "LAB", subject: "Physics Lab"},
+                {name: "Chemistry Lab", type: "LAB", subject: "Chemistry Lab"},
+                {name: "Computer Lab 1", type: "LAB", subject: "C Lab"}
+            ],
+            commonClasses: [
+                {name: "Orientation", type: "COMMON", day: "Mon", period: 0, periods: 1, classes: "ALL", teacher: "Dean"}
+            ]
+        },
+        3: {
+            classes: ["CS-A", "CS-B"],
+            subjects: [
+                {name: "MATH", periods: 5, type: "THEORY"},
+                {name: "DSA", periods: 4, type: "THEORY"},
+                {name: "DSA_LAB", periods: 4, type: "LAB"},
+                {name: "OS", periods: 4, type: "THEORY"},
+                {name: "OS_LAB", periods: 2, type: "LAB"},
+                {name: "ADLD", periods: 4, type: "THEORY"},
+                {name: "ADLD_LAB", periods: 4, type: "LAB"},
+                {name: "BC", periods: 3, type: "THEORY"},
+                {name: "DTL", periods: 2, type: "THEORY"}
+            ],
+            teachers: [
+                {name: "SUMA", subject: "MATH"},
+                {name: "SUMA_B", subject: "DSA"},
+                {name: "DEEPAMALA", subject: "DSA"},
+                {name: "DEEPAMALA", subject: "DSA_LAB"},
+                {name: "PAVITHRA", subject: "OS"},
+                {name: "PAVITHRA", subject: "OS_LAB"},
+                {name: "MOHANA", subject: "ADLD"},
+                {name: "SUJATHA", subject: "ADLD"},
+                {name: "BADARI", subject: "ADLD_LAB"},
+                {name: "T4", subject: "BC"},
+                {name: "T5", subject: "BC"}
+            ],
+            classrooms: [
+                {name: "RVUF001", type: "THEORY", subject: null},
+                {name: "RVUF002", type: "THEORY", subject: null},
+                {name: "RVUF003", type: "THEORY", subject: null},
+                {name: "KOTAK1", type: "LAB", subject: "OS_LAB"},
+                {name: "KOTAK2", type: "LAB", subject: "DSA_LAB"},
+                {name: "CBL1", type: "LAB", subject: "ADLD_LAB"}
+            ],
+            commonClasses: []
+        },
+        5: {
+            classes: ["CS-A", "CS-B"],
+            subjects: [
+                {name: "Computer Networks", periods: 4, type: "THEORY"},
+                {name: "CN Lab", periods: 2, type: "LAB"},
+                {name: "DBMS", periods: 4, type: "THEORY"},
+                {name: "DBMS Lab", periods: 2, type: "LAB"},
+                {name: "Software Engineering", periods: 4, type: "THEORY"},
+                {name: "Theory of Computation", periods: 3, type: "THEORY"},
+                {name: "Web Technologies", periods: 3, type: "THEORY"},
+                {name: "Web Lab", periods: 2, type: "LAB"}
+            ],
+            teachers: [
+                {name: "Dr. Arun", subject: "Computer Networks"},
+                {name: "Dr. Arun", subject: "CN Lab"},
+                {name: "Prof. Meena", subject: "DBMS"},
+                {name: "Prof. Meena", subject: "DBMS Lab"},
+                {name: "Dr. Ravi", subject: "Software Engineering"},
+                {name: "Prof. Lakshmi", subject: "Theory of Computation"},
+                {name: "Prof. Karthik", subject: "Web Technologies"},
+                {name: "Prof. Karthik", subject: "Web Lab"}
+            ],
+            classrooms: [
+                {name: "R201", type: "THEORY", subject: null},
+                {name: "R202", type: "THEORY", subject: null},
+                {name: "Network Lab", type: "LAB", subject: "CN Lab"},
+                {name: "Database Lab", type: "LAB", subject: "DBMS Lab"},
+                {name: "Web Lab", type: "LAB", subject: "Web Lab"}
+            ],
+            commonClasses: [
+                {name: "Technical Seminar", type: "COMMON", day: "Fri", period: 4, periods: 1, classes: "ALL", teacher: "HOD"}
+            ]
+        },
+        7: {
+            classes: ["CS-A", "CS-B"],
+            subjects: [
+                {name: "Machine Learning", periods: 4, type: "THEORY"},
+                {name: "ML Lab", periods: 2, type: "LAB"},
+                {name: "Cloud Computing", periods: 3, type: "THEORY"},
+                {name: "Blockchain Technology", periods: 3, type: "THEORY"},
+                {name: "IoT", periods: 3, type: "THEORY"},
+                {name: "IoT Lab", periods: 2, type: "LAB"},
+                {name: "Cyber Security", periods: 4, type: "THEORY"},
+                {name: "Project Work", periods: 4, type: "LAB"}
+            ],
+            teachers: [
+                {name: "Dr. Priya", subject: "Machine Learning"},
+                {name: "Dr. Priya", subject: "ML Lab"},
+                {name: "Prof. Anand", subject: "Cloud Computing"},
+                {name: "Prof. Suresh", subject: "Blockchain Technology"},
+                {name: "Dr. Madhavi", subject: "IoT"},
+                {name: "Dr. Madhavi", subject: "IoT Lab"},
+                {name: "Prof. Krishna", subject: "Cyber Security"},
+                {name: "Various", subject: "Project Work"}
+            ],
+            classrooms: [
+                {name: "R301", type: "THEORY", subject: null},
+                {name: "R302", type: "THEORY", subject: null},
+                {name: "ML Lab", type: "LAB", subject: "ML Lab"},
+                {name: "IoT Lab", type: "LAB", subject: "IoT Lab"},
+                {name: "Project Lab", type: "LAB", subject: "Project Work"}
+            ],
+            commonClasses: [
+                {name: "Industry Talk", type: "COMMON", day: "Wed", period: 5, periods: 1, classes: "ALL", teacher: "Guest"},
+                {name: "Placement Training", type: "COMMON", day: "Fri", period: 2, periods: 2, classes: "ALL", teacher: "Training Team"}
+            ]
+        }
+    };
+    
+    return samples[sem] || samples[3];
+}
 
 function addClass() {
     const v = document.getElementById("classes-input").value
@@ -722,21 +943,31 @@ function generateTimetable() {
         return;
     }
 
+    // Save current semester data before generating
+    saveSemesterData();
+
     const btn = document.getElementById('generate-btn');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<span class="loading"></span> Generating...';
     btn.disabled = true;
 
+    // Collect all semester data for teacher collision detection
+    const allSemestersData = {
+        currentSemester: currentSemester,
+        semesters: {}
+    };
+
+    // Include all semesters that have data
+    for (let sem in semesterData) {
+        if (semesterData[sem].classes.length > 0) {
+            allSemestersData.semesters[sem] = semesterData[sem];
+        }
+    }
+
     fetch("/generate", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            classes, 
-            subjects, 
-            teachers, 
-            classrooms,
-            commonClasses
-        })
+        body: JSON.stringify(allSemestersData)
     })
     .then(r => r.json())
     .then(data => {
@@ -754,7 +985,7 @@ function generateTimetable() {
 
 function renderTimetable(timetable) {
     let html = '<div class="timetable-container">';
-    html += '<h2>✨ Generated Timetable</h2>';
+    html += `<h2>✨ Generated Timetable - Semester ${currentSemester}</h2>`;
 
     const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 

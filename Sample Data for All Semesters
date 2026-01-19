@@ -1,0 +1,227 @@
+# Sample Semester Data Configuration
+# This shows typical subjects and structure for each semester
+
+SEMESTER_1_SAMPLE = {
+    "classes": ["CS-A", "CS-B"],
+    "subjects": [
+        {"name": "Mathematics-I", "periods": 5, "type": "THEORY"},
+        {"name": "Physics", "periods": 4, "type": "THEORY"},
+        {"name": "Physics Lab", "periods": 2, "type": "LAB"},
+        {"name": "Chemistry", "periods": 4, "type": "THEORY"},
+        {"name": "Chemistry Lab", "periods": 2, "type": "LAB"},
+        {"name": "English", "periods": 3, "type": "THEORY"},
+        {"name": "Engineering Graphics", "periods": 4, "type": "THEORY"},
+        {"name": "Programming in C", "periods": 3, "type": "THEORY"},
+        {"name": "C Lab", "periods": 2, "type": "LAB"}
+    ],
+    "teachers": [
+        {"name": "Dr. Sharma", "subject": "Mathematics-I"},
+        {"name": "Dr. Patel", "subject": "Physics"},
+        {"name": "Dr. Patel", "subject": "Physics Lab"},
+        {"name": "Dr. Kumar", "subject": "Chemistry"},
+        {"name": "Dr. Kumar", "subject": "Chemistry Lab"},
+        {"name": "Prof. Singh", "subject": "English"},
+        {"name": "Prof. Reddy", "subject": "Engineering Graphics"},
+        {"name": "Prof. Gupta", "subject": "Programming in C"},
+        {"name": "Prof. Gupta", "subject": "C Lab"}
+    ],
+    "classrooms": [
+        {"name": "R101", "type": "THEORY"},
+        {"name": "R102", "type": "THEORY"},
+        {"name": "Physics Lab", "type": "LAB", "subject": "Physics Lab"},
+        {"name": "Chemistry Lab", "type": "LAB", "subject": "Chemistry Lab"},
+        {"name": "Computer Lab 1", "type": "LAB", "subject": "C Lab"}
+    ],
+    "commonClasses": [
+        {
+            "name": "Orientation",
+            "type": "COMMON",
+            "day": "Mon",
+            "period": 0,
+            "periods": 1,
+            "classes": "ALL",
+            "teacher": "Dean"
+        }
+    ]
+}
+
+SEMESTER_3_SAMPLE = {
+    "classes": ["CS-A", "CS-B"],
+    "subjects": [
+        {"name": "MATH", "periods": 5, "type": "THEORY"},
+        {"name": "DSA", "periods": 4, "type": "THEORY"},
+        {"name": "DSA_LAB", "periods": 4, "type": "LAB"},
+        {"name": "OS", "periods": 4, "type": "THEORY"},
+        {"name": "OS_LAB", "periods": 2, "type": "LAB"},
+        {"name": "ADLD", "periods": 4, "type": "THEORY"},
+        {"name": "ADLD_LAB", "periods": 4, "type": "LAB"},
+        {"name": "BC", "periods": 3, "type": "THEORY"},
+        {"name": "DTL", "periods": 2, "type": "THEORY"}
+    ],
+    "teachers": [
+        {"name": "SUMA", "subject": "MATH"},
+        {"name": "NIRANJAN", "subject": "MATH"},
+        {"name": "JAYALATHA", "subject": "MATH"},
+        {"name": "KIRAN", "subject": "MATH"},
+        {"name": "SUMA_B", "subject": "DSA"},
+        {"name": "DEEPAMALA", "subject": "DSA"},
+        {"name": "KARANAM SUNIL", "subject": "DSA"},
+        {"name": "DEEPAMALA", "subject": "DSA_LAB"},
+        {"name": "PAVITHRA", "subject": "OS"},
+        {"name": "JOTHI", "subject": "OS"},
+        {"name": "PAVITHRA", "subject": "OS_LAB"},
+        {"name": "MOHANA", "subject": "ADLD"},
+        {"name": "SUJATHA", "subject": "ADLD"},
+        {"name": "RAMESH", "subject": "ADLD"},
+        {"name": "BADARI", "subject": "ADLD_LAB"},
+        {"name": "T4", "subject": "BC"},
+        {"name": "T5", "subject": "BC"},
+        {"name": "T3", "subject": "BC"}
+    ],
+    "classrooms": [
+        {"name": "RVUF001", "type": "THEORY"},
+        {"name": "RVUF002", "type": "THEORY"},
+        {"name": "RVUF003", "type": "THEORY"},
+        {"name": "RVUF004", "type": "THEORY"},
+        {"name": "RVUF101", "type": "THEORY"},
+        {"name": "KOTAK1", "type": "LAB", "subject": "OS_LAB"},
+        {"name": "KOTAK2", "type": "LAB", "subject": "DSA_LAB"},
+        {"name": "CBL1", "type": "LAB", "subject": "ADLD_LAB"}
+    ],
+    "commonClasses": []
+}
+
+SEMESTER_5_SAMPLE = {
+    "classes": ["CS-A", "CS-B"],
+    "subjects": [
+        {"name": "Computer Networks", "periods": 4, "type": "THEORY"},
+        {"name": "CN Lab", "periods": 2, "type": "LAB"},
+        {"name": "DBMS", "periods": 4, "type": "THEORY"},
+        {"name": "DBMS Lab", "periods": 2, "type": "LAB"},
+        {"name": "Software Engineering", "periods": 4, "type": "THEORY"},
+        {"name": "Theory of Computation", "periods": 3, "type": "THEORY"},
+        {"name": "Web Technologies", "periods": 3, "type": "THEORY"},
+        {"name": "Web Lab", "periods": 2, "type": "LAB"},
+        {"name": "Artificial Intelligence", "periods": 4, "type": "THEORY"},
+        {"name": "AI Lab", "periods": 2, "type": "LAB"}
+    ],
+    "teachers": [
+        {"name": "Dr. Arun", "subject": "Computer Networks"},
+        {"name": "Dr. Arun", "subject": "CN Lab"},
+        {"name": "Prof. Meena", "subject": "DBMS"},
+        {"name": "Prof. Meena", "subject": "DBMS Lab"},
+        {"name": "Dr. Ravi", "subject": "Software Engineering"},
+        {"name": "Prof. Lakshmi", "subject": "Theory of Computation"},
+        {"name": "Prof. Karthik", "subject": "Web Technologies"},
+        {"name": "Prof. Karthik", "subject": "Web Lab"},
+        {"name": "Dr. Venkat", "subject": "Artificial Intelligence"},
+        {"name": "Dr. Venkat", "subject": "AI Lab"}
+    ],
+    "classrooms": [
+        {"name": "R201", "type": "THEORY"},
+        {"name": "R202", "type": "THEORY"},
+        {"name": "R203", "type": "THEORY"},
+        {"name": "Network Lab", "type": "LAB", "subject": "CN Lab"},
+        {"name": "Database Lab", "type": "LAB", "subject": "DBMS Lab"},
+        {"name": "Web Lab", "type": "LAB", "subject": "Web Lab"},
+        {"name": "AI Lab", "type": "LAB", "subject": "AI Lab"}
+    ],
+    "commonClasses": [
+        {
+            "name": "Technical Seminar",
+            "type": "COMMON",
+            "day": "Fri",
+            "period": 4,
+            "periods": 1,
+            "classes": "ALL",
+            "teacher": "HOD"
+        }
+    ]
+}
+
+SEMESTER_7_SAMPLE = {
+    "classes": ["CS-A", "CS-B"],
+    "subjects": [
+        {"name": "Machine Learning", "periods": 4, "type": "THEORY"},
+        {"name": "ML Lab", "periods": 2, "type": "LAB"},
+        {"name": "Cloud Computing", "periods": 3, "type": "THEORY"},
+        {"name": "Blockchain Technology", "periods": 3, "type": "THEORY"},
+        {"name": "IoT", "periods": 3, "type": "THEORY"},
+        {"name": "IoT Lab", "periods": 2, "type": "LAB"},
+        {"name": "Cyber Security", "periods": 4, "type": "THEORY"},
+        {"name": "Project Work", "periods": 4, "type": "LAB"},
+        {"name": "Elective-I", "periods": 3, "type": "THEORY"}
+    ],
+    "teachers": [
+        {"name": "Dr. Priya", "subject": "Machine Learning"},
+        {"name": "Dr. Priya", "subject": "ML Lab"},
+        {"name": "Prof. Anand", "subject": "Cloud Computing"},
+        {"name": "Prof. Suresh", "subject": "Blockchain Technology"},
+        {"name": "Dr. Madhavi", "subject": "IoT"},
+        {"name": "Dr. Madhavi", "subject": "IoT Lab"},
+        {"name": "Prof. Krishna", "subject": "Cyber Security"},
+        {"name": "Various", "subject": "Project Work"},
+        {"name": "Guest Faculty", "subject": "Elective-I"}
+    ],
+    "classrooms": [
+        {"name": "R301", "type": "THEORY"},
+        {"name": "R302", "type": "THEORY"},
+        {"name": "ML Lab", "type": "LAB", "subject": "ML Lab"},
+        {"name": "IoT Lab", "type": "LAB", "subject": "IoT Lab"},
+        {"name": "Project Lab", "type": "LAB", "subject": "Project Work"}
+    ],
+    "commonClasses": [
+        {
+            "name": "Industry Talk",
+            "type": "COMMON",
+            "day": "Wed",
+            "period": 5,
+            "periods": 1,
+            "classes": "ALL",
+            "teacher": "Guest"
+        },
+        {
+            "name": "Placement Training",
+            "type": "COMMON",
+            "day": "Fri",
+            "period": 2,
+            "periods": 2,
+            "classes": "ALL",
+            "teacher": "Training Team"
+        }
+    ]
+}
+
+# Key differences by semester:
+"""
+SEMESTER 1 (Foundation):
+- Basic sciences: Physics, Chemistry
+- Mathematics-I
+- Introduction to Programming (C)
+- 3 Labs total
+- More common activities (Orientation)
+
+SEMESTER 3 (Core CS):
+- Data Structures & Algorithms
+- Operating Systems
+- Advanced Digital Logic Design
+- Mathematics for CS
+- 3 Labs (DSA, OS, ADLD)
+- Specific lab rooms for each
+
+SEMESTER 5 (Advanced):
+- Computer Networks, DBMS
+- Software Engineering
+- Web Technologies
+- Artificial Intelligence
+- 4 Labs
+- Focus on practical implementations
+
+SEMESTER 7 (Specialization):
+- Machine Learning, Cloud Computing
+- IoT, Blockchain, Cyber Security
+- Major Project Work
+- Electives
+- Industry interactions
+- Placement preparation
+"""

@@ -1,11 +1,19 @@
 import random
 
-def allowed_slots(day):
+def allowed_slots(day, constraints=None):
     """
+    Determine allowed slots for a day
     Friday is half-day → P1-P4 (slots 0,1,2,3)
     Other days → P1-P6 (slots 0,1,2,3,4,5)
-    Note: Breaks are added in display, not in data structure
+    
+    Args:
+        constraints: dict, e.g. {"half_days": ["Mon", "Tue", ...]}
     """
+    if constraints and "half_days" in constraints:
+        if day in constraints["half_days"]:
+            return [0, 1, 2, 3] # P1-P4
+        return [0, 1, 2, 3, 4, 5] # Full day
+        
     if day == "Fri":
         return [0, 1, 2, 3]  # P1-P4
     return [0, 1, 2, 3, 4, 5]  # P1-P6
@@ -53,7 +61,7 @@ def get_available_classroom(classrooms, subject_type, day, slot, classroom_usage
     )
 
 
-def generate_random_timetable(classes, subjects, teachers, days, classrooms=None, common_classes=None):
+def generate_random_timetable(classes, subjects, teachers, days, classrooms=None, common_classes=None, global_teacher_usage=None, semester_constraints=None):
     """
     Generate a random timetable with classroom allocation
     Rules:
@@ -61,6 +69,8 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
     - Labs need 2 consecutive periods
     - Labs preferred in P3-P6, fallback to P1-P2
     - Common classes scheduled first
+    - Checks against global_teacher_usage to avoid teacher conflicts across semesters
+    - Respects semester_constraints for half-day logic
     
     Args:
         classes: list of class names
@@ -69,11 +79,33 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
         days: list of day names
         classrooms: list of dicts [{"name": str, "type": "THEORY"/"LAB"/"BOTH"}]
         common_classes: list of common class dicts
+        global_teacher_usage: dict {teacher_name: {day: {slot}}} tracks booked slots for teachers
+        semester_constraints: dict e.g. {"labs_on_full_day": True} 
+                              If set, most days are half days, except one day chosen for Labs.
     """
     if classrooms is None:
         classrooms = []
     if common_classes is None:
         common_classes = []
+    if global_teacher_usage is None:
+        global_teacher_usage = {}
+    if semester_constraints is None:
+        semester_constraints = {}
+        
+    # Process constraints
+    # If "labs_on_full_day" is True:
+    # Pick a random day to be the "Full Lab Day". All other days are "Half Days".
+    # (Unless a common class forces something else, but we'll stick to slots)
+    
+    day_constraints = {}
+    if semester_constraints.get("one_full_day_for_labs", False):
+        full_day = random.choice([d for d in days if d != "Fri"]) # Usually pick a non-Friday for full day if Fri is short
+        half_days = [d for d in days if d != full_day]
+        day_constraints["half_days"] = half_days
+        # Note: full_day is implicitly full by NOT being in half_days
+        
+        # Store selected full day to prioritize labs there
+        semester_constraints["selected_full_day"] = full_day
     
     # 6 slots per day for 6 teaching periods
     tt = {c: {d: [None] * 6 for d in days} for c in classes}
@@ -114,6 +146,15 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                     "isCommon": True,
                     "isLab": common_type == "LAB"
                 }
+                # Mark teacher as used
+                if common_teacher:
+                    if common_teacher not in global_teacher_usage:
+                        global_teacher_usage[common_teacher] = {}
+                    if common_day not in global_teacher_usage[common_teacher]:
+                        global_teacher_usage[common_teacher][common_day] = set()
+                    global_teacher_usage[common_teacher][common_day].add(common_period)
+                    global_teacher_usage[common_teacher][common_day].add(common_period + 1)
+
             elif common_period < 6:  # Common activity
                 tt[cls][common_day][common_period] = {
                     "subject": common_name,
@@ -122,6 +163,13 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                     "isCommon": True,
                     "isLab": False
                 }
+                # Mark teacher as used
+                if common_teacher:
+                    if common_teacher not in global_teacher_usage:
+                        global_teacher_usage[common_teacher] = {}
+                    if common_day not in global_teacher_usage[common_teacher]:
+                        global_teacher_usage[common_teacher][common_day] = set()
+                    global_teacher_usage[common_teacher][common_day].add(common_period)
 
     # Then allocate regular subjects
     for cls in classes:
@@ -148,68 +196,118 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                 # Get a teacher for this subject
                 if sub not in teachers or not teachers[sub]:
                     break
-                t = random.choice(teachers[sub])
                 
-                # Get an available classroom (with subject-specific room support)
-                classroom = get_available_classroom(
-                    classrooms, sub_type, day, 0, classroom_usage, sub
-                ) if classrooms else None
-
+                # Check available teachers
+                possible_teachers = teachers[sub]
+                random.shuffle(possible_teachers)
+                t = None
+                
+                # We need to find a slot first to check teacher availability, or check teacher for potential slots?
+                # Strategy: For a randomly chosen slot (or loop over slots), check if ANY teacher is free.
+                
+                # This logic is slightly coupled with slot selection.
+                # Let's pick slots first, then find a teacher who is free in those slots.
+                
                 if sub_type == "LAB" and count >= 2:
                     # Lab needs 2 consecutive periods
                     # Priority: P3-P6 (slots 2-5), fallback: P1-P2 (slots 0-1)
                     
-                    if day == "Fri":
-                        # Friday half-day: only P3-P4 available (slots 2-3)
-                        lab_slot_pairs = [(2, 3)]
+                    # If we have a selected full day for labs, prefer it!
+                    if "selected_full_day" in semester_constraints and day == semester_constraints["selected_full_day"]:
+                         lab_slot_pairs = [(2, 3), (3, 4), (4, 5), (0, 1)] # Full range available
+                    elif day == "Fri" or (day in day_constraints.get("half_days", [])):
+                         # Half day: limit to P1-P4 (slots 0,1,2,3)
+                         # Max pair is (2,3)
+                         lab_slot_pairs = [(2, 3), (0, 1)] 
+                         # Note: (0,1) is P1,P2. (2,3) is P3,P4. P4 ends at slot 3.
                     else:
-                        # Full day: prefer P3-P6, fallback P1-P2
-                        lab_slot_pairs = [(2, 3), (3, 4), (4, 5), (0, 1)]
+                        # Full day standard (Mon-Thu non-constrained)
+                         lab_slot_pairs = [(2, 3), (3, 4), (4, 5), (0, 1)]
                     
-                    placed = False
                     random.shuffle(lab_slot_pairs)
                     
                     for start, end in lab_slot_pairs:
                         if tt[cls][day][start] is None and tt[cls][day][end] is None:
-                            # Allocate lab session
-                            tt[cls][day][start] = {
-                                "subject": sub, 
-                                "teacher": t,
-                                "classroom": classroom
-                            }
-                            tt[cls][day][end] = {
-                                "subject": sub, 
-                                "teacher": t,
-                                "classroom": classroom
-                            }
+                            # Slot is free for students. Now find a teacher free for BOTH slots.
+                            available_teacher = None
+                            for teacher_candidate in possible_teachers:
+                                # Check global usage
+                                busy_slots = global_teacher_usage.get(teacher_candidate, {}).get(day, set())
+                                if start not in busy_slots and end not in busy_slots:
+                                    available_teacher = teacher_candidate
+                                    break
                             
-                            # Mark classroom as used
-                            if classroom:
-                                classroom_usage[day][start].add(classroom)
-                                classroom_usage[day][end].add(classroom)
-                            
-                            count -= 2
-                            placed = True
-                            break
+                            if available_teacher:
+                                # Allocate lab session
+                                classroom = get_available_classroom(
+                                    classrooms, sub_type, day, start, classroom_usage, sub
+                                ) if classrooms else None
+                                
+                                tt[cls][day][start] = {
+                                    "subject": sub, 
+                                    "teacher": available_teacher,
+                                    "classroom": classroom
+                                }
+                                tt[cls][day][end] = {
+                                    "subject": sub, 
+                                    "teacher": available_teacher,
+                                    "classroom": classroom
+                                }
+                                
+                                # Mark classroom as used
+                                if classroom:
+                                    classroom_usage[day][start].add(classroom)
+                                    classroom_usage[day][end].add(classroom)
+                                
+                                # Mark teacher as used
+                                if available_teacher not in global_teacher_usage:
+                                    global_teacher_usage[available_teacher] = {}
+                                if day not in global_teacher_usage[available_teacher]:
+                                    global_teacher_usage[available_teacher][day] = set()
+                                global_teacher_usage[available_teacher][day].add(start)
+                                global_teacher_usage[available_teacher][day].add(end)
+
+                                count -= 2
+                                break # Break slot loop, successful placement
                     
                 else:
                     # Theory needs 1 slot
-                    slots = allowed_slots(day)
+                    slots = allowed_slots(day, day_constraints) # Pass constraints here
                     random.shuffle(slots)
                     
                     for i in slots:
                         if tt[cls][day][i] is None:
-                            tt[cls][day][i] = {
-                                "subject": sub, 
-                                "teacher": t,
-                                "classroom": classroom
-                            }
+                            # Slot is free for students. Find a teacher free in this slot.
+                            available_teacher = None
+                            for teacher_candidate in possible_teachers:
+                                busy_slots = global_teacher_usage.get(teacher_candidate, {}).get(day, set())
+                                if i not in busy_slots:
+                                    available_teacher = teacher_candidate
+                                    break
                             
-                            # Mark classroom as used
-                            if classroom:
-                                classroom_usage[day][i].add(classroom)
-                            
-                            count -= 1
-                            break
+                            if available_teacher:
+                                classroom = get_available_classroom(
+                                    classrooms, sub_type, day, i, classroom_usage, sub
+                                ) if classrooms else None
+
+                                tt[cls][day][i] = {
+                                    "subject": sub, 
+                                    "teacher": available_teacher,
+                                    "classroom": classroom
+                                }
+                                
+                                # Mark classroom as used
+                                if classroom:
+                                    classroom_usage[day][i].add(classroom)
+                                
+                                # Mark teacher as used
+                                if available_teacher not in global_teacher_usage:
+                                    global_teacher_usage[available_teacher] = {}
+                                if day not in global_teacher_usage[available_teacher]:
+                                    global_teacher_usage[available_teacher][day] = set()
+                                global_teacher_usage[available_teacher][day].add(i)
+
+                                count -= 1
+                                break # Break slot loop, successful placement
 
     return tt
