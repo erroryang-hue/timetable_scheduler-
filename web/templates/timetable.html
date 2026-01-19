@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timetable</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>Generated Timetable</h1>
+
+{% for cls, table in timetable.items() %}
+<h2>Class {{ cls }}</h2>
+
+<table class="tt">
+  <tr>
+    <th>Day</th>
+    <th>P1</th>
+    <th>P2</th>
+    <th>BREAK</th>
+    <th>P3</th>
+    <th>P4</th>
+    <th>LUNCH</th>
+    <th>P5</th>
+    <th>P6</th>
+  </tr>
+
+{% for day, slots in table.items() %}
+<tr>
+  <td class="day">{{ day }}</td>
+
+  {% for i in range(slots|length) %}
+    {% set cell = slots[i] %}
+
+    {# --- BREAKS --- #}
+    {% if i == 2 %}
+      <td class="break">BREAK</td>
+
+    {% elif i == 5 %}
+      <td class="break">LUNCH</td>
+
+    {# --- SECOND HALF OF LAB (SKIP RENDERING) --- #}
+    {% elif cell and i > 0
+          and slots[i-1]
+          and cell.subject == slots[i-1].subject
+          and 'LAB' in cell.subject %}
+      {# render nothing #}
+
+    {# --- LAB START (MERGE 2 PERIODS) --- #}
+    {% elif cell and i + 1 < slots|length
+          and slots[i+1]
+          and cell.subject == slots[i+1].subject
+          and 'LAB' in cell.subject %}
+      <td class="lab" colspan="2">
+        {{ cell.subject }}<br>
+        <small>{{ cell.teacher }}</small>
+      </td>
+
+    {# --- THEORY --- #}
+    {% elif cell %}
+      <td class="theory">
+        {{ cell.subject }}<br>
+        <small>{{ cell.teacher }}</small>
+      </td>
+
+    {# --- FREE PERIOD --- #}
+    {% else %}
+      <td class="free">FREE</td>
+    {% endif %}
+
+  {% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+{% endfor %}
+
+<br>
+<a href="/">Generate Again</a>
+
+</body>
+</html>
