@@ -25,8 +25,9 @@ SEMESTER_1 = {
         "C_LAB": ["Prof. Gupta"]
     },
     "classrooms": [
-        {"name": "R101", "type": "THEORY"},
-        {"name": "R102", "type": "THEORY"},
+        {"name": "R101", "type": "THEORY", "class": "1A"},
+        {"name": "R102", "type": "THEORY", "class": "1B"},
+        {"name": "Drawing Hall", "type": "THEORY", "subject": "EG"},
         {"name": "Physics Lab", "type": "LAB", "subject": "PHY_LAB"},
         {"name": "Chemistry Lab", "type": "LAB", "subject": "CHEM_LAB"},
         {"name": "Computer Lab 1", "type": "LAB", "subject": "C_LAB"}
@@ -66,14 +67,18 @@ SEMESTER_3 = {
         "ADLD": ["MOHANA", "SUJATHA", "RAMESH"],
         "ADLD_LAB": ["BADARI"],
         "BC": ["T4", "T5", "T3"],
-        "DTL": ["T4"] # Assuming T4 teaches DTL as implied by sample image or default
+        "DTL": ["T4"]
     },
     "classrooms": [
-        {"name": "RVUF001", "type": "THEORY"},
-        {"name": "RVUF002", "type": "THEORY"},
+        # Dedicated theory classroom for 3A
+        {"name": "RVUF001", "type": "THEORY", "class": "3A"},
+        # Dedicated theory classroom for 3B  
+        {"name": "RVUF002", "type": "THEORY", "class": "3B"},
+        # General theory rooms (backup)
         {"name": "RVUF003", "type": "THEORY"},
         {"name": "RVUF004", "type": "THEORY"},
         {"name": "RVUF101", "type": "THEORY"},
+        # Specific lab rooms
         {"name": "KOTAK1", "type": "LAB", "subject": "OS_LAB"},
         {"name": "KOTAK2", "type": "LAB", "subject": "DSA_LAB"},
         {"name": "CBL1", "type": "LAB", "subject": "ADLD_LAB"}
@@ -84,51 +89,45 @@ SEMESTER_3 = {
 SEMESTER_5 = {
     "classes": ["5A", "5B"],
     "subjects": {
-        "CN": {"count": 4, "type": "THEORY"},
-        "CN_LAB": {"count": 2, "type": "LAB"},
-        "DBMS": {"count": 4, "type": "THEORY"},
-        "DBMS_LAB": {"count": 2, "type": "LAB"},
-        "SE": {"count": 4, "type": "THEORY"},
+        "DBMS": {"count": 3, "type": "THEORY"},
         "TOC": {"count": 3, "type": "THEORY"},
-        "WEB": {"count": 3, "type": "THEORY"},
-        "WEB_LAB": {"count": 2, "type": "LAB"},
-        "AI": {"count": 4, "type": "THEORY"},
-        "AI_LAB": {"count": 2, "type": "LAB"}
+        "POME": {"count": 3, "type": "THEORY"},
+        "AIML": {"count": 3, "type": "THEORY"},
+        "BASKET_COURSE": {"count": 3, "type": "THEORY"},
+        "COUNSELLING": {"count": 1, "type": "THEORY"},
+        # Labs - one lab per Friday afternoon (rotates weekly)
+        "DBMS_LAB": {"count": 2, "type": "LAB"},
+        "AIML_LAB": {"count": 2, "type": "LAB"},
+        "TOC_LAB": {"count": 2, "type": "LAB"}
     },
     "teachers": {
-        "CN": ["Dr. Arun"],
-        "CN_LAB": ["Dr. Arun"],
         "DBMS": ["Prof. Meena"],
-        "DBMS_LAB": ["Prof. Meena"],
-        "SE": ["Dr. Ravi"],
         "TOC": ["Prof. Lakshmi"],
-        "WEB": ["Prof. Karthik"],
-        "WEB_LAB": ["Prof. Karthik"],
-        "AI": ["Dr. Venkat"],
-        "AI_LAB": ["Dr. Venkat"]
+        "POME": ["Dr. Ravi"],
+        "AIML": ["Dr. Venkat"],
+        "BASKET_COURSE": ["Guest Faculty"],
+        "COUNSELLING": ["Counselor"],
+        "DBMS_LAB": ["Prof. Meena"],
+        "AIML_LAB": ["Dr. Venkat"],
+        "TOC_LAB": ["Prof. Lakshmi"]
     },
     "classrooms": [
-        {"name": "R201", "type": "THEORY"},
-        {"name": "R202", "type": "THEORY"},
-        {"name": "R203", "type": "THEORY"},
-        {"name": "Network Lab", "type": "LAB", "subject": "CN_LAB"},
-        {"name": "Database Lab", "type": "LAB", "subject": "DBMS_LAB"},
-        {"name": "Web Lab", "type": "LAB", "subject": "WEB_LAB"},
-        {"name": "AI Lab", "type": "LAB", "subject": "AI_LAB"}
+        # Dedicated theory classroom for 5A
+        {"name": "RVUF104", "type": "THEORY", "class": "5A"},
+        # Dedicated theory classroom for 5B
+        {"name": "RVUF105", "type": "THEORY", "class": "5B"},
+        # Specific lab rooms for lab subjects
+        {"name": "Database Lab - A2 BATCH", "type": "LAB", "subject": "DBMS_LAB"},
+        {"name": "AIML Lab - A1 BATCH", "type": "LAB", "subject": "AIML_LAB"},
+        {"name": "TOC Lab", "type": "LAB", "subject": "TOC_LAB"}
     ],
-    "commonClasses": [
-        {
-            "name": "Technical Seminar",
-            "type": "COMMON",
-            "day": "Fri",
-            "period": 4,
-            "periods": 1,
-            "classes": "ALL",
-            "teacher": "HOD"
-        }
-    ],
+    "commonClasses": [],
     "constraints": {
-        "one_full_day_for_labs": True
+        "one_full_day_for_labs": True,
+        # Any day can be the full day with lab after lunch (P5-P6)
+        # 4 days are half-days (P1-P4 only), 1 day has lab in afternoon
+        "half_day_count": 4,  # 4 days must be half-days
+        "lab_afternoon_count": 1  # 1 day has lab after lunch
     }
 }
 
@@ -157,8 +156,8 @@ SEMESTER_7 = {
         "ELECTIVE": ["Guest Faculty"]
     },
     "classrooms": [
-        {"name": "R301", "type": "THEORY"},
-        {"name": "R302", "type": "THEORY"},
+        {"name": "R301", "type": "THEORY", "class": "7A"},
+        {"name": "R302", "type": "THEORY", "class": "7B"},
         {"name": "ML Lab", "type": "LAB", "subject": "ML_LAB"},
         {"name": "IoT Lab", "type": "LAB", "subject": "IOT_LAB"},
         {"name": "Project Lab", "type": "LAB", "subject": "PROJECT"}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,6 +34,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -95,7 +97,8 @@
             flex-wrap: wrap;
         }
 
-        input, select {
+        input,
+        select {
             flex: 1;
             min-width: 100px;
             padding: 10px 14px;
@@ -105,7 +108,8 @@
             transition: all 0.3s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -184,6 +188,7 @@
                 opacity: 0;
                 transform: translateX(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -237,14 +242,16 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         #result {
@@ -397,7 +404,8 @@
                 font-size: 0.75rem;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 8px 4px;
             }
         }
@@ -413,586 +421,737 @@
                 padding: 20px;
             }
 
-            .input-sections, .generate-section, .download-section {
+            .input-sections,
+            .generate-section,
+            .download-section {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>
-            <span>📅</span>
-            Timetable Scheduler
-        </h1>
-        <p>Create organized schedules with classrooms for your classes</p>
-        
-        <div style="margin-top: 20px;">
-            <label style="font-size: 1.1rem; font-weight: 600; color: #2d3748; margin-right: 10px;">Select Semester:</label>
-            <select id="semester-select" style="padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: 2px solid #667eea; background: white; cursor: pointer;">
-                <option value="1">1st Semester</option>
-                <option value="3" selected>3rd Semester</option>
-                <option value="5">5th Semester</option>
-                <option value="7">7th Semester</option>
-            </select>
-            <button class="btn" style="margin-left: 10px; padding: 10px 20px;" onclick="loadSampleData()">📋 Load Sample Data</button>
-        </div>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>📅</span>
+                Timetable Scheduler
+            </h1>
+            <p>Create organized schedules with classrooms for your classes</p>
 
-    <div class="input-sections">
-        <div class="section">
-            <h3>🏫 Classes</h3>
-            <div class="input-group">
-                <input id="classes-input" placeholder="3A, 3B, 3C">
-                <button class="btn" onclick="addClass()">Add</button>
-            </div>
-            <div class="items-list" id="classes-list">
-                <div class="empty-state">No classes added yet</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>📚 Subjects</h3>
-            <div class="input-group">
-                <input id="subject-name" placeholder="Subject name" style="flex: 2;">
-                <input id="subject-periods" placeholder="Periods" style="max-width: 80px;">
-                <select id="subject-type" style="max-width: 100px;">
-                    <option value="THEORY">Theory</option>
-                    <option value="LAB">Lab</option>
+            <div style="margin-top: 20px;">
+                <label style="font-size: 1.1rem; font-weight: 600; color: #2d3748; margin-right: 10px;">Select
+                    Semester:</label>
+                <select id="semester-select"
+                    style="padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: 2px solid #667eea; background: white; cursor: pointer;">
+                    <option value="1">1st Semester</option>
+                    <option value="3" selected>3rd Semester</option>
+                    <option value="5">5th Semester</option>
+                    <option value="7">7th Semester</option>
                 </select>
-                <button class="btn" onclick="addSubject()">Add</button>
-            </div>
-            <div class="items-list" id="subjects-list">
-                <div class="empty-state">No subjects added yet</div>
+                <button class="btn" style="margin-left: 10px; padding: 10px 20px;" onclick="loadSampleData()">📋 Load
+                    Sample Data</button>
             </div>
         </div>
 
-        <div class="section">
-            <h3>👨‍🏫 Teachers</h3>
-            <div class="input-group">
-                <input id="teacher-name" placeholder="Teacher name">
-                <input id="teacher-subject" placeholder="Subject">
-                <button class="btn" onclick="addTeacher()">Add</button>
+        <div class="input-sections">
+            <div class="section">
+                <h3>🏫 Classes</h3>
+                <div class="input-group">
+                    <input id="classes-input" placeholder="3A, 3B, 3C">
+                    <button class="btn" onclick="addClass()">Add</button>
+                </div>
+                <div class="items-list" id="classes-list">
+                    <div class="empty-state">No classes added yet</div>
+                </div>
             </div>
-            <div class="items-list" id="teachers-list">
-                <div class="empty-state">No teachers added yet</div>
-            </div>
-        </div>
 
-        <div class="section">
-            <h3>🚪 Classrooms & Labs</h3>
-            <div class="input-group" style="flex-direction: column; gap: 8px;">
-                <div style="display: flex; gap: 8px; width: 100%;">
-                    <input id="classroom-name" placeholder="Room name (e.g., R101, Physics Lab)" style="flex: 2;">
-                    <select id="classroom-type" style="flex: 1;">
-                        <option value="THEORY">Theory Room</option>
+            <div class="section">
+                <h3>📚 Subjects</h3>
+                <div class="input-group">
+                    <input id="subject-name" placeholder="Subject name" style="flex: 2;">
+                    <input id="subject-periods" placeholder="Periods" style="max-width: 80px;">
+                    <select id="subject-type" style="max-width: 100px;">
+                        <option value="THEORY">Theory</option>
                         <option value="LAB">Lab</option>
-                        <option value="BOTH">Both</option>
                     </select>
+                    <button class="btn" onclick="addSubject()">Add</button>
                 </div>
-                <input id="classroom-subject" placeholder="Specific subject (optional, for labs)" style="width: 100%;">
-                <button class="btn" style="width: 100%;" onclick="addClassroom()">Add</button>
+                <div class="items-list" id="subjects-list">
+                    <div class="empty-state">No subjects added yet</div>
+                </div>
             </div>
-            <div class="items-list" id="classrooms-list">
-                <div class="empty-state">No classrooms added yet</div>
+
+            <div class="section">
+                <h3>👨‍🏫 Teachers</h3>
+                <div class="input-group">
+                    <input id="teacher-name" placeholder="Teacher name">
+                    <input id="teacher-subject" placeholder="Subject">
+                    <button class="btn" onclick="addTeacher()">Add</button>
+                </div>
+                <div class="items-list" id="teachers-list">
+                    <div class="empty-state">No teachers added yet</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🚪 Classrooms & Labs</h3>
+                <div class="input-group" style="flex-direction: column; gap: 8px;">
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <input id="classroom-name" placeholder="Room name (e.g., R101, Physics Lab)" style="flex: 2;">
+                        <select id="classroom-type" style="flex: 1;">
+                            <option value="THEORY">Theory Room</option>
+                            <option value="LAB">Lab</option>
+                            <option value="BOTH">Both</option>
+                        </select>
+                    </div>
+                    <input id="classroom-subject" placeholder="Specific subject (optional, for labs)"
+                        style="width: 100%;">
+                    <button class="btn" style="width: 100%;" onclick="addClassroom()">Add</button>
+                </div>
+                <div class="items-list" id="classrooms-list">
+                    <div class="empty-state">No classrooms added yet</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📌 Classroom Allocation Logic</h3>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">
+                    Assign specific "Home Rooms" for theory classes or specific rooms for certain subjects.
+                </p>
+                <div class="input-group" style="flex-direction: column; gap: 8px;">
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <select id="allocation-type" style="flex: 1;" onchange="toggleAllocationInputs()">
+                            <option value="HOME_ROOM">Home Room (Class → Room)</option>
+                            <option value="SUBJECT_ROOM">Subject Room (Subject → Room)</option>
+                        </select>
+                    </div>
+
+                    <!-- Home Room Input -->
+                    <div id="home-room-inputs" style="display: flex; gap: 8px; width: 100%;">
+                        <input id="alloc-class" placeholder="Class (e.g., 3A)">
+                        <input id="alloc-room-1" placeholder="Room (e.g., RVUF001)">
+                    </div>
+
+                    <!-- Subject Room Input -->
+                    <div id="subject-room-inputs" style="display: none; gap: 8px; width: 100%;">
+                        <input id="alloc-subject" placeholder="Subject (e.g., EG)">
+                        <input id="alloc-room-2" placeholder="Room (e.g., Drawing Hall)">
+                    </div>
+
+                    <button class="btn" style="width: 100%;" onclick="addAllocationLogic()">Add Rule</button>
+                </div>
+                <div class="items-list" id="allocation-list">
+                    <div class="empty-state">No specific rules added yet</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🎯 Common Classes</h3>
+                <div class="input-group" style="flex-direction: column; gap: 10px;">
+                    <input id="common-name" placeholder="Activity name (e.g., Assembly, Sports)">
+                    <select id="common-type" style="width: 100%;">
+                        <option value="COMMON">Common Activity</option>
+                        <option value="LAB">Common Lab</option>
+                    </select>
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <select id="common-day" style="flex: 1;">
+                            <option value="Mon">Monday</option>
+                            <option value="Tue">Tuesday</option>
+                            <option value="Wed">Wednesday</option>
+                            <option value="Thu">Thursday</option>
+                            <option value="Fri">Friday</option>
+                        </select>
+                        <select id="common-period" style="flex: 1;">
+                            <option value="0">P1</option>
+                            <option value="1">P2</option>
+                            <option value="2">P3</option>
+                            <option value="3">P4</option>
+                            <option value="4">P5</option>
+                            <option value="5">P6</option>
+                        </select>
+                    </div>
+                    <input id="common-classes" placeholder="Classes (e.g., 3A, 3B, 3C or leave empty for all)">
+                    <input id="common-teacher" placeholder="Teacher (optional)">
+                    <button class="btn" onclick="addCommonClass()">Add</button>
+                </div>
+                <div class="items-list" id="common-list">
+                    <div class="empty-state">No common classes added yet</div>
+                </div>
             </div>
         </div>
 
-        <div class="section">
-            <h3>🎯 Common Classes</h3>
-            <div class="input-group" style="flex-direction: column; gap: 10px;">
-                <input id="common-name" placeholder="Activity name (e.g., Assembly, Sports)">
-                <select id="common-type" style="width: 100%;">
-                    <option value="COMMON">Common Activity</option>
-                    <option value="LAB">Common Lab</option>
-                </select>
-                <div style="display: flex; gap: 8px; width: 100%;">
-                    <select id="common-day" style="flex: 1;">
-                        <option value="Mon">Monday</option>
-                        <option value="Tue">Tuesday</option>
-                        <option value="Wed">Wednesday</option>
-                        <option value="Thu">Thursday</option>
-                        <option value="Fri">Friday</option>
-                    </select>
-                    <select id="common-period" style="flex: 1;">
-                        <option value="0">P1</option>
-                        <option value="1">P2</option>
-                        <option value="2">P3</option>
-                        <option value="3">P4</option>
-                        <option value="4">P5</option>
-                        <option value="5">P6</option>
-                    </select>
-                </div>
-                <input id="common-classes" placeholder="Classes (e.g., 3A, 3B, 3C or leave empty for all)">
-                <input id="common-teacher" placeholder="Teacher (optional)">
-                <button class="btn" onclick="addCommonClass()">Add</button>
-            </div>
-            <div class="items-list" id="common-list">
-                <div class="empty-state">No common classes added yet</div>
-            </div>
+        <div class="generate-section">
+            <button class="btn generate-btn" onclick="generateTimetable()" id="generate-btn">
+                ⚡ Generate Timetable
+            </button>
         </div>
+
+        <div id="result"></div>
     </div>
 
-    <div class="generate-section">
-        <button class="btn generate-btn" onclick="generateTimetable()" id="generate-btn">
-            ⚡ Generate Timetable
-        </button>
-    </div>
+    <script>
+        let classes = [];
+        let subjects = [];
+        let teachers = [];
+        let classrooms = [];
+        let commonClasses = [];
+        let currentSemester = 3;
 
-    <div id="result"></div>
-</div>
+        // Store data for each semester
+        let semesterData = {
+            1: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [], constraints: {} },
+            3: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [], constraints: {} },
+            5: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [], constraints: {} },
+            7: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [], constraints: {} }
+        };
 
-<script>
-let classes = [];
-let subjects = [];
-let teachers = [];
-let classrooms = [];
-let commonClasses = [];
-let currentSemester = 3;
+        // Switch semester
+        document.getElementById('semester-select').addEventListener('change', function () {
+            // Save current data
+            saveSemesterData();
 
-// Store data for each semester
-let semesterData = {
-    1: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
-    3: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
-    5: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] },
-    7: { classes: [], subjects: [], teachers: [], classrooms: [], commonClasses: [] }
-};
+            // Load new semester
+            currentSemester = parseInt(this.value);
+            loadSemesterData();
+        });
 
-// Switch semester
-document.getElementById('semester-select').addEventListener('change', function() {
-    // Save current data
-    saveSemesterData();
-    
-    // Load new semester
-    currentSemester = parseInt(this.value);
-    loadSemesterData();
-});
+        function saveSemesterData() {
+            // Determine existing constraints to preserve them (as there is no UI to edit them yet)
+            const existingConstraints = semesterData[currentSemester].constraints || {};
 
-function saveSemesterData() {
-    semesterData[currentSemester] = {
-        classes: [...classes],
-        subjects: [...subjects],
-        teachers: [...teachers],
-        classrooms: [...classrooms],
-        commonClasses: [...commonClasses]
-    };
-}
-
-function loadSemesterData() {
-    const data = semesterData[currentSemester];
-    classes = [...data.classes];
-    subjects = [...data.subjects];
-    teachers = [...data.teachers];
-    classrooms = [...data.classrooms];
-    commonClasses = [...data.commonClasses];
-    
-    // Re-render all lists
-    renderClasses();
-    renderSubjects();
-    renderTeachers();
-    renderClassrooms();
-    renderCommonClasses();
-    
-    // Clear result
-    document.getElementById('result').innerHTML = '';
-}
-
-function loadSampleData() {
-    const sampleData = getSampleDataForSemester(currentSemester);
-    
-    if (confirm(`Load sample data for Semester ${currentSemester}? This will replace current data.`)) {
-        classes = sampleData.classes;
-        subjects = sampleData.subjects;
-        teachers = sampleData.teachers;
-        classrooms = sampleData.classrooms;
-        commonClasses = sampleData.commonClasses;
-        
-        saveSemesterData();
-        loadSemesterData();
-        
-        alert('Sample data loaded successfully!');
-    }
-}
-
-function getSampleDataForSemester(sem) {
-    const samples = {
-        1: {
-            classes: ["CS-A", "CS-B"],
-            subjects: [
-                {name: "Mathematics-I", periods: 5, type: "THEORY"},
-                {name: "Physics", periods: 4, type: "THEORY"},
-                {name: "Physics Lab", periods: 2, type: "LAB"},
-                {name: "Chemistry", periods: 4, type: "THEORY"},
-                {name: "Chemistry Lab", periods: 2, type: "LAB"},
-                {name: "English", periods: 3, type: "THEORY"},
-                {name: "Engineering Graphics", periods: 4, type: "THEORY"},
-                {name: "Programming in C", periods: 3, type: "THEORY"},
-                {name: "C Lab", periods: 2, type: "LAB"}
-            ],
-            teachers: [
-                {name: "Dr. Sharma", subject: "Mathematics-I"},
-                {name: "Dr. Patel", subject: "Physics"},
-                {name: "Dr. Patel", subject: "Physics Lab"},
-                {name: "Dr. Kumar", subject: "Chemistry"},
-                {name: "Dr. Kumar", subject: "Chemistry Lab"},
-                {name: "Prof. Singh", subject: "English"},
-                {name: "Prof. Reddy", subject: "Engineering Graphics"},
-                {name: "Prof. Gupta", subject: "Programming in C"},
-                {name: "Prof. Gupta", subject: "C Lab"}
-            ],
-            classrooms: [
-                {name: "R101", type: "THEORY", subject: null},
-                {name: "R102", type: "THEORY", subject: null},
-                {name: "Physics Lab", type: "LAB", subject: "Physics Lab"},
-                {name: "Chemistry Lab", type: "LAB", subject: "Chemistry Lab"},
-                {name: "Computer Lab 1", type: "LAB", subject: "C Lab"}
-            ],
-            commonClasses: [
-                {name: "Orientation", type: "COMMON", day: "Mon", period: 0, periods: 1, classes: "ALL", teacher: "Dean"}
-            ]
-        },
-        3: {
-            classes: ["CS-A", "CS-B"],
-            subjects: [
-                {name: "MATH", periods: 5, type: "THEORY"},
-                {name: "DSA", periods: 4, type: "THEORY"},
-                {name: "DSA_LAB", periods: 4, type: "LAB"},
-                {name: "OS", periods: 4, type: "THEORY"},
-                {name: "OS_LAB", periods: 2, type: "LAB"},
-                {name: "ADLD", periods: 4, type: "THEORY"},
-                {name: "ADLD_LAB", periods: 4, type: "LAB"},
-                {name: "BC", periods: 3, type: "THEORY"},
-                {name: "DTL", periods: 2, type: "THEORY"}
-            ],
-            teachers: [
-                {name: "SUMA", subject: "MATH"},
-                {name: "SUMA_B", subject: "DSA"},
-                {name: "DEEPAMALA", subject: "DSA"},
-                {name: "DEEPAMALA", subject: "DSA_LAB"},
-                {name: "PAVITHRA", subject: "OS"},
-                {name: "PAVITHRA", subject: "OS_LAB"},
-                {name: "MOHANA", subject: "ADLD"},
-                {name: "SUJATHA", subject: "ADLD"},
-                {name: "BADARI", subject: "ADLD_LAB"},
-                {name: "T4", subject: "BC"},
-                {name: "T5", subject: "BC"}
-            ],
-            classrooms: [
-                {name: "RVUF001", type: "THEORY", subject: null},
-                {name: "RVUF002", type: "THEORY", subject: null},
-                {name: "RVUF003", type: "THEORY", subject: null},
-                {name: "KOTAK1", type: "LAB", subject: "OS_LAB"},
-                {name: "KOTAK2", type: "LAB", subject: "DSA_LAB"},
-                {name: "CBL1", type: "LAB", subject: "ADLD_LAB"}
-            ],
-            commonClasses: []
-        },
-        5: {
-            classes: ["CS-A", "CS-B"],
-            subjects: [
-                {name: "Computer Networks", periods: 4, type: "THEORY"},
-                {name: "CN Lab", periods: 2, type: "LAB"},
-                {name: "DBMS", periods: 4, type: "THEORY"},
-                {name: "DBMS Lab", periods: 2, type: "LAB"},
-                {name: "Software Engineering", periods: 4, type: "THEORY"},
-                {name: "Theory of Computation", periods: 3, type: "THEORY"},
-                {name: "Web Technologies", periods: 3, type: "THEORY"},
-                {name: "Web Lab", periods: 2, type: "LAB"}
-            ],
-            teachers: [
-                {name: "Dr. Arun", subject: "Computer Networks"},
-                {name: "Dr. Arun", subject: "CN Lab"},
-                {name: "Prof. Meena", subject: "DBMS"},
-                {name: "Prof. Meena", subject: "DBMS Lab"},
-                {name: "Dr. Ravi", subject: "Software Engineering"},
-                {name: "Prof. Lakshmi", subject: "Theory of Computation"},
-                {name: "Prof. Karthik", subject: "Web Technologies"},
-                {name: "Prof. Karthik", subject: "Web Lab"}
-            ],
-            classrooms: [
-                {name: "R201", type: "THEORY", subject: null},
-                {name: "R202", type: "THEORY", subject: null},
-                {name: "Network Lab", type: "LAB", subject: "CN Lab"},
-                {name: "Database Lab", type: "LAB", subject: "DBMS Lab"},
-                {name: "Web Lab", type: "LAB", subject: "Web Lab"}
-            ],
-            commonClasses: [
-                {name: "Technical Seminar", type: "COMMON", day: "Fri", period: 4, periods: 1, classes: "ALL", teacher: "HOD"}
-            ]
-        },
-        7: {
-            classes: ["CS-A", "CS-B"],
-            subjects: [
-                {name: "Machine Learning", periods: 4, type: "THEORY"},
-                {name: "ML Lab", periods: 2, type: "LAB"},
-                {name: "Cloud Computing", periods: 3, type: "THEORY"},
-                {name: "Blockchain Technology", periods: 3, type: "THEORY"},
-                {name: "IoT", periods: 3, type: "THEORY"},
-                {name: "IoT Lab", periods: 2, type: "LAB"},
-                {name: "Cyber Security", periods: 4, type: "THEORY"},
-                {name: "Project Work", periods: 4, type: "LAB"}
-            ],
-            teachers: [
-                {name: "Dr. Priya", subject: "Machine Learning"},
-                {name: "Dr. Priya", subject: "ML Lab"},
-                {name: "Prof. Anand", subject: "Cloud Computing"},
-                {name: "Prof. Suresh", subject: "Blockchain Technology"},
-                {name: "Dr. Madhavi", subject: "IoT"},
-                {name: "Dr. Madhavi", subject: "IoT Lab"},
-                {name: "Prof. Krishna", subject: "Cyber Security"},
-                {name: "Various", subject: "Project Work"}
-            ],
-            classrooms: [
-                {name: "R301", type: "THEORY", subject: null},
-                {name: "R302", type: "THEORY", subject: null},
-                {name: "ML Lab", type: "LAB", subject: "ML Lab"},
-                {name: "IoT Lab", type: "LAB", subject: "IoT Lab"},
-                {name: "Project Lab", type: "LAB", subject: "Project Work"}
-            ],
-            commonClasses: [
-                {name: "Industry Talk", type: "COMMON", day: "Wed", period: 5, periods: 1, classes: "ALL", teacher: "Guest"},
-                {name: "Placement Training", type: "COMMON", day: "Fri", period: 2, periods: 2, classes: "ALL", teacher: "Training Team"}
-            ]
+            semesterData[currentSemester] = {
+                classes: [...classes],
+                subjects: [...subjects],
+                teachers: [...teachers],
+                classrooms: [...classrooms],
+                commonClasses: [...commonClasses],
+                constraints: existingConstraints
+            };
         }
-    };
-    
-    return samples[sem] || samples[3];
-}
 
-function addClass() {
-    const v = document.getElementById("classes-input").value
-        .split(",").map(x => x.trim()).filter(Boolean);
-    v.forEach(c => { if (!classes.includes(c)) classes.push(c); });
-    document.getElementById("classes-input").value = "";
-    renderClasses();
-}
+        function loadSemesterData() {
+            const data = semesterData[currentSemester];
+            classes = [...data.classes];
+            subjects = [...data.subjects];
+            teachers = [...data.teachers];
+            classrooms = [...data.classrooms];
+            commonClasses = [...data.commonClasses];
+            // Constraints are loaded implicitly into semesterData[currentSemester]
 
-function renderClasses() {
-    const d = document.getElementById("classes-list");
-    if (classes.length === 0) {
-        d.innerHTML = '<div class="empty-state">No classes added yet</div>';
-        return;
-    }
-    d.innerHTML = classes.map((c, i) =>
-        `<div class="item">
+            // Re-render all lists
+            renderClasses();
+            renderSubjects();
+            renderTeachers();
+            renderClassrooms();
+            renderCommonClasses();
+            renderAllocationRules();
+
+            // Clear result
+            document.getElementById('result').innerHTML = '';
+        }
+
+        function loadSampleData() {
+            const sampleData = getSampleDataForSemester(currentSemester);
+
+            if (confirm(`Load sample data for Semester ${currentSemester}? This will replace current data.`)) {
+                classes = sampleData.classes;
+                subjects = sampleData.subjects;
+                teachers = sampleData.teachers;
+                classrooms = sampleData.classrooms;
+                commonClasses = sampleData.commonClasses;
+
+                // Load constraints if present
+                if (sampleData.constraints) {
+                    semesterData[currentSemester].constraints = sampleData.constraints;
+                } else {
+                    semesterData[currentSemester].constraints = {};
+                }
+
+                saveSemesterData();
+                loadSemesterData();
+
+                alert('Sample data loaded successfully!');
+            }
+        }
+
+        function getSampleDataForSemester(sem) {
+            const samples = {
+                1: {
+                    classes: ["CS-A", "CS-B"],
+                    subjects: [
+                        { name: "Mathematics-I", periods: 5, type: "THEORY" },
+                        { name: "Physics", periods: 4, type: "THEORY" },
+                        { name: "Physics Lab", periods: 2, type: "LAB" },
+                        { name: "Chemistry", periods: 4, type: "THEORY" },
+                        { name: "Chemistry Lab", periods: 2, type: "LAB" },
+                        { name: "English", periods: 3, type: "THEORY" },
+                        { name: "Engineering Graphics", periods: 4, type: "THEORY" },
+                        { name: "Programming in C", periods: 3, type: "THEORY" },
+                        { name: "C Lab", periods: 2, type: "LAB" }
+                    ],
+                    teachers: [
+                        { name: "Dr. Sharma", subject: "Mathematics-I" },
+                        { name: "Dr. Patel", subject: "Physics" },
+                        { name: "Dr. Patel", subject: "Physics Lab" },
+                        { name: "Dr. Kumar", subject: "Chemistry" },
+                        { name: "Dr. Kumar", subject: "Chemistry Lab" },
+                        { name: "Prof. Singh", subject: "English" },
+                        { name: "Prof. Reddy", subject: "Engineering Graphics" },
+                        { name: "Prof. Gupta", subject: "Programming in C" },
+                        { name: "Prof. Gupta", subject: "C Lab" }
+                    ],
+                    classrooms: [
+                        { name: "R101", type: "THEORY", subject: null },
+                        { name: "R102", type: "THEORY", subject: null },
+                        { name: "Physics Lab", type: "LAB", subject: "Physics Lab" },
+                        { name: "Chemistry Lab", type: "LAB", subject: "Chemistry Lab" },
+                        { name: "Computer Lab 1", type: "LAB", subject: "C Lab" }
+                    ],
+                    commonClasses: [
+                        { name: "Orientation", type: "COMMON", day: "Mon", period: 0, periods: 1, classes: "ALL", teacher: "Dean" }
+                    ],
+                    constraints: {}
+                },
+                3: {
+                    classes: ["3A", "3B"],
+                    subjects: [
+                        { name: "MATH3", periods: 5, type: "THEORY" },
+                        { name: "DSA", periods: 4, type: "THEORY" },
+                        { name: "DSA_LAB", periods: 4, type: "LAB" },
+                        { name: "OS", periods: 4, type: "THEORY" },
+                        { name: "OS_LAB", periods: 2, type: "LAB" },
+                        { name: "ADLD", periods: 4, type: "THEORY" },
+                        { name: "ADLD_LAB", periods: 4, type: "LAB" },
+                        { name: "BC", periods: 3, type: "THEORY" },
+                        { name: "DTL", periods: 2, type: "THEORY" }
+                    ],
+                    teachers: [
+                        { name: "SUMA", subject: "MATH3" },
+                        { name: "SUMA_B", subject: "DSA" },
+                        { name: "DEEPAMALA", subject: "DSA_LAB" },
+                        { name: "PAVITHRA", subject: "OS" },
+                        { name: "PAVITHRA", subject: "OS_LAB" },
+                        { name: "MOHANA", subject: "ADLD" },
+                        { name: "BADARI", subject: "ADLD_LAB" },
+                        { name: "T4", subject: "BC" },
+                        { name: "T4", subject: "DTL" }
+                    ],
+                    classrooms: [
+                        { name: "RVUF001", type: "THEORY", subject: null },
+                        { name: "RVUF002", type: "THEORY", subject: null },
+                        { name: "KOTAK1", type: "LAB", subject: "OS_LAB" },
+                        { name: "KOTAK2", type: "LAB", subject: "DSA_LAB" },
+                        { name: "CBL1", type: "LAB", subject: "ADLD_LAB" }
+                    ],
+                    commonClasses: [],
+                    constraints: {}
+                },
+                5: {
+                    classes: ["5A", "5B"],
+                    subjects: [
+                        { name: "DBMS", periods: 3, type: "THEORY" },
+                        { name: "TOC", periods: 3, type: "THEORY" },
+                        { name: "POME", periods: 3, type: "THEORY" },
+                        { name: "AIML", periods: 3, type: "THEORY" },
+                        { name: "BASKET_COURSE", periods: 3, type: "THEORY" },
+                        { name: "COUNSELLING", periods: 1, type: "THEORY" },
+                        { name: "DBMS_LAB", periods: 2, type: "LAB" },
+                        { name: "AIML_LAB", periods: 2, type: "LAB" },
+                        { name: "TOC_LAB", periods: 2, "type": "LAB" }
+                    ],
+                    teachers: [
+                        { name: "Prof. Meena", subject: "DBMS" },
+                        { name: "Prof. Meena", subject: "DBMS_LAB" },
+                        { name: "Prof. Lakshmi", subject: "TOC" },
+                        { name: "Prof. Lakshmi", subject: "TOC_LAB" },
+                        { name: "Dr. Ravi", subject: "POME" },
+                        { name: "Dr. Venkat", subject: "AIML" },
+                        { name: "Dr. Venkat", subject: "AIML_LAB" },
+                        { name: "Guest Faculty", subject: "BASKET_COURSE" },
+                        { name: "Counselor", subject: "COUNSELLING" }
+                    ],
+                    classrooms: [
+                        { name: "RVUF104", type: "THEORY", subject: null },
+                        { name: "RVUF105", type: "THEORY", subject: null },
+                        { name: "Database Lab", type: "LAB", subject: "DBMS_LAB" },
+                        { name: "AIML Lab", type: "LAB", subject: "AIML_LAB" },
+                        { name: "TOC Lab", type: "LAB", subject: "TOC_LAB" }
+                    ],
+                    commonClasses: [],
+                    constraints: {
+                        "one_full_day_for_labs": true,
+                        "half_day_count": 4,
+                        "lab_afternoon_count": 1
+                    }
+                },
+                7: {
+                    classes: ["7A", "7B"],
+                    subjects: [
+                        { name: "ML", periods: 4, type: "THEORY" },
+                        { name: "ML_LAB", periods: 2, type: "LAB" },
+                        { name: "CLOUD", periods: 3, type: "THEORY" },
+                        { name: "BLOCKCHAIN", periods: 3, type: "THEORY" },
+                        { name: "IOT", periods: 3, type: "THEORY" },
+                        { name: "IOT_LAB", periods: 2, type: "LAB" },
+                        { name: "CYBER", periods: 4, type: "THEORY" },
+                        { name: "PROJECT", periods: 4, type: "LAB" },
+                        { name: "ELECTIVE", periods: 3, type: "THEORY" }
+                    ],
+                    teachers: [
+                        { name: "Dr. Priya", subject: "ML" },
+                        { name: "Dr. Priya", subject: "ML_LAB" },
+                        { name: "Prof. Anand", subject: "CLOUD" },
+                        { name: "Prof. Suresh", subject: "BLOCKCHAIN" },
+                        { name: "Dr. Madhavi", subject: "IOT" },
+                        { name: "Dr. Madhavi", subject: "IOT_LAB" },
+                        { name: "Prof. Krishna", subject: "CYBER" },
+                        { name: "Various", subject: "PROJECT" },
+                        { name: "Guest Faculty", subject: "ELECTIVE" }
+                    ],
+                    classrooms: [
+                        { name: "R301", type: "THEORY", subject: null },
+                        { name: "R302", type: "THEORY", subject: null },
+                        { name: "ML Lab", type: "LAB", subject: "ML_LAB" },
+                        { name: "IoT Lab", type: "LAB", subject: "IOT_LAB" },
+                        { name: "Project Lab", type: "LAB", subject: "PROJECT" }
+                    ],
+                    commonClasses: [
+                        { name: "Industry Talk", type: "COMMON", day: "Wed", period: 5, periods: 1, classes: "ALL", teacher: "Guest" },
+                        { name: "Placement Training", type: "COMMON", day: "Fri", period: 2, periods: 2, classes: "ALL", teacher: "Training Team" }
+                    ],
+                    constraints: {}
+                }
+            };
+
+            return samples[sem] || samples[3];
+        }
+
+        function addClass() {
+            const v = document.getElementById("classes-input").value
+                .split(",").map(x => x.trim()).filter(Boolean);
+            v.forEach(c => { if (!classes.includes(c)) classes.push(c); });
+            document.getElementById("classes-input").value = "";
+            renderClasses();
+        }
+
+        function renderClasses() {
+            const d = document.getElementById("classes-list");
+            if (classes.length === 0) {
+                d.innerHTML = '<div class="empty-state">No classes added yet</div>';
+                return;
+            }
+            d.innerHTML = classes.map((c, i) =>
+                `<div class="item">
             <span class="item-name">${c}</span>
             <button class="btn-danger" onclick="classes.splice(${i},1);renderClasses()">Remove</button>
         </div>`
-    ).join("");
-}
+            ).join("");
+        }
 
-function addSubject() {
-    const n = document.getElementById("subject-name").value.trim();
-    const p = parseInt(document.getElementById("subject-periods").value);
-    const t = document.getElementById("subject-type").value;
-    if (n && p) {
-        subjects.push({name: n, periods: p, type: t});
-        document.getElementById("subject-name").value = "";
-        document.getElementById("subject-periods").value = "";
-        renderSubjects();
-    }
-}
+        function addSubject() {
+            const n = document.getElementById("subject-name").value.trim();
+            const p = parseInt(document.getElementById("subject-periods").value);
+            const t = document.getElementById("subject-type").value;
+            if (n && p) {
+                subjects.push({ name: n, periods: p, type: t });
+                document.getElementById("subject-name").value = "";
+                document.getElementById("subject-periods").value = "";
+                renderSubjects();
+            }
+        }
 
-function renderSubjects() {
-    const list = document.getElementById("subjects-list");
-    if (subjects.length === 0) {
-        list.innerHTML = '<div class="empty-state">No subjects added yet</div>';
-        return;
-    }
-    list.innerHTML = subjects.map((s, i) =>
-        `<div class="item">
+        function renderSubjects() {
+            const list = document.getElementById("subjects-list");
+            if (subjects.length === 0) {
+                list.innerHTML = '<div class="empty-state">No subjects added yet</div>';
+                return;
+            }
+            list.innerHTML = subjects.map((s, i) =>
+                `<div class="item">
             <div>
                 <span class="item-name">${s.name}</span>
                 <span class="item-details"> (${s.periods} periods, ${s.type})</span>
             </div>
             <button class="btn-danger" onclick="subjects.splice(${i},1);renderSubjects()">Remove</button>
         </div>`
-    ).join("");
-}
+            ).join("");
+        }
 
-function addTeacher() {
-    const n = document.getElementById("teacher-name").value.trim();
-    const s = document.getElementById("teacher-subject").value.trim();
-    if (n && s) {
-        teachers.push({name: n, subject: s});
-        document.getElementById("teacher-name").value = "";
-        document.getElementById("teacher-subject").value = "";
-        renderTeachers();
-    }
-}
+        function addTeacher() {
+            const n = document.getElementById("teacher-name").value.trim();
+            const s = document.getElementById("teacher-subject").value.trim();
+            if (n && s) {
+                teachers.push({ name: n, subject: s });
+                document.getElementById("teacher-name").value = "";
+                document.getElementById("teacher-subject").value = "";
+                renderTeachers();
+            }
+        }
 
-function renderTeachers() {
-    const list = document.getElementById("teachers-list");
-    if (teachers.length === 0) {
-        list.innerHTML = '<div class="empty-state">No teachers added yet</div>';
-        return;
-    }
-    list.innerHTML = teachers.map((t, i) =>
-        `<div class="item">
+        function renderTeachers() {
+            const list = document.getElementById("teachers-list");
+            if (teachers.length === 0) {
+                list.innerHTML = '<div class="empty-state">No teachers added yet</div>';
+                return;
+            }
+            list.innerHTML = teachers.map((t, i) =>
+                `<div class="item">
             <div>
                 <span class="item-name">${t.name}</span>
                 <span class="item-details"> - ${t.subject}</span>
             </div>
             <button class="btn-danger" onclick="teachers.splice(${i},1);renderTeachers()">Remove</button>
         </div>`
-    ).join("");
-}
+            ).join("");
+        }
 
-function addClassroom() {
-    const n = document.getElementById("classroom-name").value.trim();
-    const t = document.getElementById("classroom-type").value;
-    const s = document.getElementById("classroom-subject").value.trim();
-    
-    if (n) {
-        classrooms.push({
-            name: n, 
-            type: t,
-            subject: s || null  // Specific subject for this room (e.g., "Physics" for Physics Lab)
-        });
-        document.getElementById("classroom-name").value = "";
-        document.getElementById("classroom-subject").value = "";
-        renderClassrooms();
-    }
-}
+        function addClassroom() {
+            const n = document.getElementById("classroom-name").value.trim();
+            const t = document.getElementById("classroom-type").value;
+            const s = document.getElementById("classroom-subject").value.trim();
 
-function renderClassrooms() {
-    const list = document.getElementById("classrooms-list");
-    if (classrooms.length === 0) {
-        list.innerHTML = '<div class="empty-state">No classrooms added yet</div>';
-        return;
-    }
-    list.innerHTML = classrooms.map((c, i) => {
-        const subjectInfo = c.subject ? ` - For: ${c.subject}` : '';
-        return `<div class="item">
+            if (n) {
+                classrooms.push({
+                    name: n,
+                    type: t,
+                    subject: s || null  // Specific subject for this room (e.g., "Physics" for Physics Lab)
+                });
+                document.getElementById("classroom-name").value = "";
+                document.getElementById("classroom-subject").value = "";
+                renderClassrooms();
+            }
+        }
+
+        function renderClassrooms() {
+            const list = document.getElementById("classrooms-list");
+            if (classrooms.length === 0) {
+                list.innerHTML = '<div class="empty-state">No classrooms added yet</div>';
+                return;
+            }
+            list.innerHTML = classrooms.map((c, i) => {
+                const subjectInfo = c.subject ? ` - For: ${c.subject}` : '';
+                return `<div class="item">
             <div>
                 <span class="item-name">${c.name}</span>
                 <span class="item-details"> - ${c.type}${subjectInfo}</span>
             </div>
             <button class="btn-danger" onclick="classrooms.splice(${i},1);renderClassrooms()">Remove</button>
         </div>`;
-    }).join("");
-}
+            }).join("");
+        }
 
-function addCommonClass() {
-    const name = document.getElementById("common-name").value.trim();
-    const type = document.getElementById("common-type").value;
-    const day = document.getElementById("common-day").value;
-    const period = parseInt(document.getElementById("common-period").value);
-    const classesInput = document.getElementById("common-classes").value.trim();
-    const teacher = document.getElementById("common-teacher").value.trim();
-    
-    if (name && day) {
-        const applicableClasses = classesInput 
-            ? classesInput.split(",").map(x => x.trim()).filter(Boolean)
-            : "ALL";
-        
-        // For common labs, they need 2 consecutive periods
-        const periodsNeeded = type === "LAB" ? 2 : 1;
-        
-        commonClasses.push({
-            name: name,
-            type: type,
-            day: day,
-            period: period,
-            periods: periodsNeeded,
-            classes: applicableClasses,
-            teacher: teacher || ""
-        });
-        
-        document.getElementById("common-name").value = "";
-        document.getElementById("common-classes").value = "";
-        document.getElementById("common-teacher").value = "";
-        renderCommonClasses();
-    }
-}
+        function addCommonClass() {
+            const name = document.getElementById("common-name").value.trim();
+            const type = document.getElementById("common-type").value;
+            const day = document.getElementById("common-day").value;
+            const period = parseInt(document.getElementById("common-period").value);
+            const classesInput = document.getElementById("common-classes").value.trim();
+            const teacher = document.getElementById("common-teacher").value.trim();
 
-function renderCommonClasses() {
-    const list = document.getElementById("common-list");
-    if (commonClasses.length === 0) {
-        list.innerHTML = '<div class="empty-state">No common classes added yet</div>';
-        return;
-    }
-    
-    const periodNames = ["P1", "P2", "P3", "P4", "P5", "P6"];
-    
-    list.innerHTML = commonClasses.map((c, i) => {
-        const classesText = c.classes === "ALL" ? "All classes" : c.classes.join(", ");
-        const periodText = c.type === "LAB" 
-            ? `${periodNames[c.period]}-${periodNames[c.period + 1]}` 
-            : periodNames[c.period];
-        const typeIcon = c.type === "LAB" ? "🔬" : "🎯";
-        const teacherText = c.teacher ? ` - ${c.teacher}` : '';
-        
-        return `<div class="item">
+            if (name && day) {
+                const applicableClasses = classesInput
+                    ? classesInput.split(",").map(x => x.trim()).filter(Boolean)
+                    : "ALL";
+
+                // For common labs, they need 2 consecutive periods
+                const periodsNeeded = type === "LAB" ? 2 : 1;
+
+                commonClasses.push({
+                    name: name,
+                    type: type,
+                    day: day,
+                    period: period,
+                    periods: periodsNeeded,
+                    classes: applicableClasses,
+                    teacher: teacher || ""
+                });
+
+                document.getElementById("common-name").value = "";
+                document.getElementById("common-classes").value = "";
+                document.getElementById("common-teacher").value = "";
+                renderCommonClasses();
+            }
+        }
+
+        function renderCommonClasses() {
+            const list = document.getElementById("common-list");
+            if (commonClasses.length === 0) {
+                list.innerHTML = '<div class="empty-state">No common classes added yet</div>';
+                return;
+            }
+
+            const periodNames = ["P1", "P2", "P3", "P4", "P5", "P6"];
+
+            list.innerHTML = commonClasses.map((c, i) => {
+                const classesText = c.classes === "ALL" ? "All classes" : c.classes.join(", ");
+                const periodText = c.day + " " + (c.type === "LAB"
+                    ? `${periodNames[c.period]}-${periodNames[c.period + 1]}`
+                    : periodNames[c.period]);
+                const typeIcon = c.type === "LAB" ? "🔬" : "🎯";
+                const teacherText = c.teacher ? ` - ${c.teacher}` : '';
+
+                return `<div class="item">
             <div>
                 <span class="item-name">${typeIcon} ${c.name}</span>
-                <span class="item-details"> - ${c.day} ${periodText}${teacherText}</span>
+                <span class="item-details"> - ${periodText}${teacherText}</span>
                 <br>
                 <span class="item-details" style="font-size: 0.8rem;">📋 ${classesText}</span>
             </div>
             <button class="btn-danger" onclick="commonClasses.splice(${i},1);renderCommonClasses()">Remove</button>
         </div>`;
-    }).join("");
-}
-
-function generateTimetable() {
-    if (classes.length === 0 || subjects.length === 0 || teachers.length === 0) {
-        alert('Please add at least one class, subject, and teacher before generating the timetable.');
-        return;
-    }
-
-    // Save current semester data before generating
-    saveSemesterData();
-
-    const btn = document.getElementById('generate-btn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="loading"></span> Generating...';
-    btn.disabled = true;
-
-    // Collect all semester data for teacher collision detection
-    const allSemestersData = {
-        currentSemester: currentSemester,
-        semesters: {}
-    };
-
-    // Include all semesters that have data
-    for (let sem in semesterData) {
-        if (semesterData[sem].classes.length > 0) {
-            allSemestersData.semesters[sem] = semesterData[sem];
+            }).join("");
         }
-    }
 
-    fetch("/generate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(allSemestersData)
-    })
-    .then(r => r.json())
-    .then(data => {
-        renderTimetable(data);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Error generating timetable. Please try again.');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-}
+        // --- Allocation Logic UI Functions ---
 
-function renderTimetable(timetable) {
-    let html = '<div class="timetable-container">';
-    html += `<h2>✨ Generated Timetable - Semester ${currentSemester}</h2>`;
+        function toggleAllocationInputs() {
+            const type = document.getElementById("allocation-type").value;
+            document.getElementById("home-room-inputs").style.display = type === "HOME_ROOM" ? "flex" : "none";
+            document.getElementById("subject-room-inputs").style.display = type === "SUBJECT_ROOM" ? "flex" : "none";
+        }
 
-    const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        function addAllocationLogic() {
+            const type = document.getElementById("allocation-type").value;
 
-    for (const cls in timetable) {
-        html += `<div class="class-timetable">`;
-        html += `<h3>Class ${cls}</h3>`;
-        html += `<table>
+            if (type === "HOME_ROOM") {
+                const className = document.getElementById("alloc-class").value.trim();
+                const roomName = document.getElementById("alloc-room-1").value.trim();
+
+                if (className && roomName) {
+                    // Add as a special classroom entry
+                    classrooms.push({
+                        name: roomName,
+                        type: "THEORY",
+                        class: className,
+                        subject: null
+                    });
+                    document.getElementById("alloc-class").value = "";
+                    document.getElementById("alloc-room-1").value = "";
+                }
+            } else {
+                const subjectName = document.getElementById("alloc-subject").value.trim();
+                const roomName = document.getElementById("alloc-room-2").value.trim();
+
+                if (subjectName && roomName) {
+                    classrooms.push({
+                        name: roomName,
+                        type: "THEORY",  // Assume specific rooms are for Theory unless specified?
+                        // Actually, could be LAB too but let's default to Theory or BOTH key logic
+                        subject: subjectName,
+                        class: null
+                    });
+                    document.getElementById("alloc-subject").value = "";
+                    document.getElementById("alloc-room-2").value = "";
+                }
+            }
+            renderAllocationRules();
+        }
+
+        function renderAllocationRules() {
+            // Filter classrooms that are "Rules" (have class or specific subject)
+            // But wait, renderClassrooms already renders everything in the list.
+            // Maybe we should just update renderClassrooms to show these details better?
+            // Or keep a separate list visually?
+
+            // Let's just update renderClassrooms to be smarter and call it here.
+            renderClassrooms();
+
+            // Current UI separates them in lists, but data-wise they are all in `classrooms`.
+            // Let's explicitly filter for the "Allocation Logic" list UI
+            const list = document.getElementById("allocation-list");
+
+            // "Rules" are basically classrooms with 'class' (Home Room) or 'subject' (Specific Room) set
+            // Note: standard labs have 'subject' set usually, so we might duplicate visuals if we aren't careful.
+            // Let's only show "Home Rooms" and "Theory Subject Rooms" here to separate from standard Lab rooms
+
+            const rules = classrooms.filter(c => c.class || (c.subject && c.type !== "LAB"));
+
+            if (rules.length === 0) {
+                list.innerHTML = '<div class="empty-state">No specific rules added yet</div>';
+                return;
+            }
+
+            list.innerHTML = rules.map((c) => {
+                // Find index in main classrooms array to allow deletion
+                const originalIndex = classrooms.indexOf(c);
+
+                let text = "";
+                let icon = "📌";
+                if (c.class) {
+                    text = `Home Room: <b>${c.class}</b>  →  ${c.name}`;
+                    icon = "🏠";
+                } else if (c.subject) {
+                    text = `Subject Room: <b>${c.subject}</b>  →  ${c.name}`;
+                    icon = "📖";
+                }
+
+                return `<div class="item">
+                    <div>
+                        <span class="item-name">${icon} ${text}</span>
+                    </div>
+                    <button class="btn-danger" onclick="classrooms.splice(${originalIndex},1);renderAllocationRules();renderClassrooms()">Remove</button>
+                </div>`;
+            }).join("");
+        }
+
+        function generateTimetable() {
+            if (classes.length === 0 || subjects.length === 0 || teachers.length === 0) {
+                alert('Please add at least one class, subject, and teacher before generating the timetable.');
+                return;
+            }
+
+            // Save current semester data before generating
+            saveSemesterData();
+
+            const btn = document.getElementById('generate-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> Generating...';
+            btn.disabled = true;
+
+            // Collect all semester data for teacher collision detection
+            const allSemestersData = {
+                currentSemester: currentSemester,
+                semesters: {}
+            };
+
+            // Include all semesters that have data
+            for (let sem in semesterData) {
+                if (semesterData[sem].classes.length > 0) {
+                    allSemestersData.semesters[sem] = semesterData[sem];
+                }
+            }
+
+            fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(allSemestersData)
+            })
+                .then(r => r.json())
+                .then(data => {
+                    renderTimetable(data);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error generating timetable. Please try again.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        function renderTimetable(timetable) {
+            let html = '<div class="timetable-container">';
+            html += `<h2>✨ Generated Timetable - Semester ${currentSemester}</h2>`;
+
+            const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            for (const cls in timetable) {
+                html += `<div class="class-timetable">`;
+                html += `<h3>Class ${cls}</h3>`;
+                html += `<table>
             <tr>
                 <th>Day</th>
                 <th>P1</th>
@@ -1005,134 +1164,135 @@ function renderTimetable(timetable) {
                 <th>P6</th>
             </tr>`;
 
-        const sortedDays = Object.keys(timetable[cls]).sort((a, b) => {
-            return dayOrder.indexOf(a) - dayOrder.indexOf(b);
-        });
+                const sortedDays = Object.keys(timetable[cls]).sort((a, b) => {
+                    return dayOrder.indexOf(a) - dayOrder.indexOf(b);
+                });
 
-        sortedDays.forEach(day => {
-            html += `<tr><td>${day}</td>`;
-            
-            // P1
-            const p1 = timetable[cls][day][0];
-            if (p1 && p1.subject) {
-                const cellClass = p1.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                sortedDays.forEach(day => {
+                    html += `<tr><td>${day}</td>`;
+
+                    // P1
+                    const p1 = timetable[cls][day][0];
+                    if (p1 && p1.subject) {
+                        const cellClass = p1.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p1.subject}</div>
                     <span class="teacher-name">${p1.teacher || ''}</span>
                     ${p1.classroom ? `<span class="classroom-name">🚪 ${p1.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            // P2
-            const p2 = timetable[cls][day][1];
-            if (p2 && p2.subject) {
-                const cellClass = p2.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
+
+                    // P2
+                    const p2 = timetable[cls][day][1];
+                    if (p2 && p2.subject) {
+                        const cellClass = p2.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p2.subject}</div>
                     <span class="teacher-name">${p2.teacher || ''}</span>
                     ${p2.classroom ? `<span class="classroom-name">🚪 ${p2.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            // BREAK
-            html += `<td class="break-cell">BREAK</td>`;
-            
-            // P3
-            const p3 = timetable[cls][day][2];
-            if (p3 && p3.subject) {
-                const cellClass = p3.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
+
+                    // BREAK
+                    html += `<td class="break-cell">BREAK</td>`;
+
+                    // P3
+                    const p3 = timetable[cls][day][2];
+                    if (p3 && p3.subject) {
+                        const cellClass = p3.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p3.subject}</div>
                     <span class="teacher-name">${p3.teacher || ''}</span>
                     ${p3.classroom ? `<span class="classroom-name">🚪 ${p3.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            // P4
-            const p4 = timetable[cls][day][3];
-            if (p4 && p4.subject) {
-                const cellClass = p4.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
+
+                    // P4
+                    const p4 = timetable[cls][day][3];
+                    if (p4 && p4.subject) {
+                        const cellClass = p4.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p4.subject}</div>
                     <span class="teacher-name">${p4.teacher || ''}</span>
                     ${p4.classroom ? `<span class="classroom-name">🚪 ${p4.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            // LUNCH
-            html += `<td class="break-cell">LUNCH</td>`;
-            
-            // P5
-            const p5 = timetable[cls][day][4];
-            if (p5 && p5.subject) {
-                const cellClass = p5.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
+
+                    // LUNCH
+                    html += `<td class="break-cell">LUNCH</td>`;
+
+                    // P5
+                    const p5 = timetable[cls][day][4];
+                    if (p5 && p5.subject) {
+                        const cellClass = p5.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p5.subject}</div>
                     <span class="teacher-name">${p5.teacher || ''}</span>
                     ${p5.classroom ? `<span class="classroom-name">🚪 ${p5.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            // P6
-            const p6 = timetable[cls][day][5];
-            if (p6 && p6.subject) {
-                const cellClass = p6.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
-                html += `<td class="${cellClass}">
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
+
+                    // P6
+                    const p6 = timetable[cls][day][5];
+                    if (p6 && p6.subject) {
+                        const cellClass = p6.subject.includes('LAB') ? 'lab-cell' : 'theory-cell';
+                        html += `<td class="${cellClass}">
                     <div class="subject-cell">${p6.subject}</div>
                     <span class="teacher-name">${p6.teacher || ''}</span>
                     ${p6.classroom ? `<span class="classroom-name">🚪 ${p6.classroom}</span>` : ''}
                 </td>`;
-            } else {
-                html += `<td>FREE</td>`;
-            }
-            
-            html += `</tr>`;
-        });
-        html += `</table></div>`;
-    }
+                    } else {
+                        html += `<td>FREE</td>`;
+                    }
 
-    html += `<div class="download-section">
+                    html += `</tr>`;
+                });
+                html += `</table></div>`;
+            }
+
+            html += `<div class="download-section">
         <button class="btn btn-download" onclick="window.print()">📥 Download / Print</button>
     </div>`;
-    html += '</div>';
+            html += '</div>';
 
-    document.getElementById("result").innerHTML = html;
-    document.getElementById("result").scrollIntoView({behavior: 'smooth'});
-}
+            document.getElementById("result").innerHTML = html;
+            document.getElementById("result").scrollIntoView({ behavior: 'smooth' });
+        }
 
-// Enter key support
-document.getElementById('classes-input').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addClass();
-});
-document.getElementById('subject-name').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addSubject();
-});
-document.getElementById('teacher-name').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addTeacher();
-});
-document.getElementById('classroom-name').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addClassroom();
-});
-document.getElementById('classroom-subject').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addClassroom();
-});
-document.getElementById('common-name').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addCommonClass();
-});
-document.getElementById('common-teacher').addEventListener('keypress', e => {
-    if (e.key === 'Enter') addCommonClass();
-});
-</script>
+        // Enter key support
+        document.getElementById('classes-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addClass();
+        });
+        document.getElementById('subject-name').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addSubject();
+        });
+        document.getElementById('teacher-name').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addTeacher();
+        });
+        document.getElementById('classroom-name').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addClassroom();
+        });
+        document.getElementById('classroom-subject').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addClassroom();
+        });
+        document.getElementById('common-name').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addCommonClass();
+        });
+        document.getElementById('common-teacher').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addCommonClass();
+        });
+    </script>
 
 </body>
+
 </html>

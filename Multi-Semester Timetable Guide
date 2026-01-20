@@ -62,24 +62,23 @@
 ---
 
 ### **Semester 5 (Advanced Topics)**
-**Focus:** Networks, Databases, Web Technologies
+**Focus:** Database, Theory, AI & Electives
 
 **Typical Subjects:**
-- Computer Networks (4 periods) + CN Lab (2 periods)
-- Database Management Systems (4 periods) + DBMS Lab (2 periods)
-- Software Engineering (4 periods)
-- Theory of Computation (3 periods)
-- Web Technologies (3 periods) + Web Lab (2 periods)
-- Artificial Intelligence (4 periods) + AI Lab (2 periods)
+- DBMS (3 periods) + DBMS Lab (2 periods)
+- Theory of Computation (3 periods) + TOC Lab (2 periods)
+- POME (3 periods)
+- AIML (3 periods) + AIML Lab (2 periods)
+- Basket Course (3 periods)
+- Counselling (1 period)
 
 **Special Features:**
-- Multiple specialized labs (4 labs)
-- Focus on practical implementation
-- Project-based learning
+- **Flexible Half-Day Schedule:** 4 days are half-days (P1-P4 only), 1 day is full day with Lab in afternoon
+- **Labs:** One lab per week (rotates or scheduled on the full day)
+- **Dedicated Lab Rooms:** Database Lab, AIML Lab, TOC Lab
 
 **Common Classes:**
-- Technical Seminars (Friday P4)
-- Guest lectures
+- None (focused on academics)
 
 ---
 
@@ -172,7 +171,7 @@ Generate in order: 1 → 3 → 5 → 7
 ```
 Semester 1: Physics Lab, Chemistry Lab, C Lab
 Semester 3: KOTAK1, KOTAK2, CBL1
-Semester 5: Network Lab, Database Lab, Web Lab
+Semester 5: Database Lab, AIML Lab, TOC Lab
 Semester 7: ML Lab, IoT Lab, Project Lab
 ```
 
@@ -216,16 +215,16 @@ P5: BC - T4 - RVUF003
 P6: FREE
 ```
 
-### **Semester 5 - Monday**
+### **Semester 5 - Monday (Half-Day Example)**
 ```
-P1: Computer Networks - Dr. Arun - R201
-P2: Software Engineering - Dr. Ravi - R202
+P1: DBMS - Prof. Meena - RVUF104
+P2: TOC - Prof. Lakshmi - RVUF104
 --- BREAK ---
-P3: DBMS Lab (2 periods) - Prof. Meena - Database Lab
-P4: DBMS Lab (cont.)
+P3: AIML - Dr. Venkat - RVUF104
+P4: POME - Dr. Ravi - RVUF104
 --- LUNCH ---
-P5: Theory of Computation - Prof. Lakshmi - R203
-P6: Web Technologies - Prof. Karthik - R201
+P5: FREE (Half-Day)
+P6: FREE (Half-Day)
 ```
 
 ### **Semester 7 - Monday**

@@ -80,18 +80,29 @@ def generate():
     else:
         teachers_dict = teachers_input
 
-    timetable = generate_random_timetable(
-        current_sem_data.get("classes", []),
-        subjects_dict,
-        teachers_dict,
-        DAYS,
-        current_sem_data.get("classrooms", []),
-        current_sem_data.get("commonClasses", []),
-        global_teacher_usage=global_teacher_usage,
-        semester_constraints=current_sem_data.get("constraints", {})
-    )
-
-    return jsonify(timetable)
+    try:
+        timetable = generate_random_timetable(
+            current_sem_data.get("classes", []),
+            subjects_dict,
+            teachers_dict,
+            DAYS,
+            current_sem_data.get("classrooms", []),
+            current_sem_data.get("commonClasses", []),
+            global_teacher_usage=global_teacher_usage,
+            semester_constraints=current_sem_data.get("constraints", {})
+        )
+        
+        return jsonify(timetable)
+    
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"ERROR generating Semester {current_semester}:")
+        print(error_details)
+        return jsonify({
+            "error": f"Failed to generate timetable: {str(e)}",
+            "details": error_details
+        }), 500
 
 
 if __name__ == "__main__":

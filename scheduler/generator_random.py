@@ -10,22 +10,24 @@ def allowed_slots(day, constraints=None):
         constraints: dict, e.g. {"half_days": ["Mon", "Tue", ...]}
     """
     if constraints and "half_days" in constraints:
-        if day in constraints["half_days"]:
-            return [0, 1, 2, 3] # P1-P4
-        return [0, 1, 2, 3, 4, 5] # Full day
+        # For semesters with flexible half-day policies (like Sem 5),
+        # Theory classes are strictly P1-P4 (slots 0-3).
+        # P5-P6 are reserved for Labs (on the full day) or remain empty.
+        return [0, 1, 2, 3]
         
     if day == "Fri":
         return [0, 1, 2, 3]  # P1-P4
     return [0, 1, 2, 3, 4, 5]  # P1-P6
 
 
-def get_available_classroom(classrooms, subject_type, day, slot, classroom_usage, subject_name=None):
+def get_available_classroom(classrooms, subject_type, day, slot, classroom_usage, subject_name=None, class_name=None):
     """
     Find an available classroom for the given subject type, day, and slot
-    Prioritizes specific lab rooms for lab subjects
+    Prioritizes specific lab rooms for lab subjects and class-specific classrooms
     
     Args:
         subject_name: Name of the subject (used to find specific lab rooms)
+        class_name: Name of the class section (e.g., "5A", "5B")
     """
     # First, check for specific rooms for this subject (e.g., "Physics Lab" for "Physics")
     if subject_name:
@@ -39,16 +41,31 @@ def get_available_classroom(classrooms, subject_type, day, slot, classroom_usage
                 room for room in specific_classrooms 
                 if room not in classroom_usage.get(day, {}).get(slot, set())
             ]
-            return random.choice(available) if available else random.choice(specific_classrooms)
+            # Strict: If specific room is full, return None (don't schedule)
+            return random.choice(available) if available else None
+    
+    # Check for class-specific rooms for theory subjects
+    if class_name and subject_type == "THEORY":
+        class_specific_rooms = [
+            c["name"] for c in classrooms
+            if c.get("class") == class_name and c["type"] == "THEORY"
+        ]
+        if class_specific_rooms:
+            dedicated = class_specific_rooms[0]  # Always use the dedicated classroom
+            # Strict: Check if dedicated room is actually free
+            if dedicated not in classroom_usage.get(day, {}).get(slot, set()):
+                return dedicated
+            else:
+                return None # Dedicated room blocked, try another slot
     
     # Otherwise, use general rooms matching the type
     suitable_classrooms = [
         c["name"] for c in classrooms 
-        if (c["type"] == subject_type or c["type"] == "BOTH") and not c.get("subject")
+        if (c["type"] == subject_type or c["type"] == "BOTH") and not c.get("subject") and not c.get("class")
     ]
     
     if not suitable_classrooms:
-        suitable_classrooms = [c["name"] for c in classrooms if not c.get("subject")]
+        suitable_classrooms = [c["name"] for c in classrooms if not c.get("subject") and not c.get("class")]
     
     # Filter out classrooms already in use at this time
     available = [
@@ -56,9 +73,8 @@ def get_available_classroom(classrooms, subject_type, day, slot, classroom_usage
         if room not in classroom_usage.get(day, {}).get(slot, set())
     ]
     
-    return random.choice(available) if available else (
-        random.choice(suitable_classrooms) if suitable_classrooms else None
-    )
+    # Strict: If no general room available, return None
+    return random.choice(available) if available else None
 
 
 def generate_random_timetable(classes, subjects, teachers, days, classrooms=None, common_classes=None, global_teacher_usage=None, semester_constraints=None):
@@ -92,20 +108,6 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
     if semester_constraints is None:
         semester_constraints = {}
         
-    # Process constraints
-    # If "labs_on_full_day" is True:
-    # Pick a random day to be the "Full Lab Day". All other days are "Half Days".
-    # (Unless a common class forces something else, but we'll stick to slots)
-    
-    day_constraints = {}
-    if semester_constraints.get("one_full_day_for_labs", False):
-        full_day = random.choice([d for d in days if d != "Fri"]) # Usually pick a non-Friday for full day if Fri is short
-        half_days = [d for d in days if d != full_day]
-        day_constraints["half_days"] = half_days
-        # Note: full_day is implicitly full by NOT being in half_days
-        
-        # Store selected full day to prioritize labs there
-        semester_constraints["selected_full_day"] = full_day
     
     # 6 slots per day for 6 teaching periods
     tt = {c: {d: [None] * 6 for d in days} for c in classes}
@@ -172,8 +174,51 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                     global_teacher_usage[common_teacher][common_day].add(common_period)
 
     # Then allocate regular subjects
+    # IMPORTANT: Sort subjects to prioritized LABS first!
+    # This prevents Theory classes from filling up slots that Labs need.
+    sorted_subjects_items = sorted(subjects.items(), key=lambda x: 0 if x[1].get("type") == "LAB" else 1)
+
+    # Track used full days to distribute them across classes (Load Balancing)
+    used_full_days = set()
+
     for cls in classes:
-        for sub, info in subjects.items():
+        # Clone constraints for this specific class
+        cls_constraints = semester_constraints.copy()
+        day_constraints = {} # Local restrictions for allowed_slots
+        
+        # Process constraints PER CLASS to allow randomization
+        if cls_constraints.get("one_full_day_for_labs", False):
+            if "force_lab_day" in cls_constraints:
+                full_day = cls_constraints["force_lab_day"]
+                cls_constraints["selected_full_day"] = full_day
+            else:
+                # Randomly select a full day (try to pick one not used yet)
+                available_days = [d for d in days if d != "Fri"]
+                candidates = [d for d in available_days if d not in used_full_days]
+                if not candidates:
+                    candidates = available_days # All days used, pick any
+                
+                full_day = random.choice(candidates)
+                cls_constraints["selected_full_day"] = full_day
+                used_full_days.add(full_day)
+            
+            # Set half days based on the selected full day
+            if "half_day_count" in cls_constraints:
+                half_day_count = cls_constraints["half_day_count"]
+                # Set half days (all except full day, up to count)
+                cls_constraints["half_days"] = [d for d in days if d != full_day][:half_day_count]
+            else:
+                # Default: all other days are half days
+                cls_constraints["half_days"] = [d for d in days if d != full_day]
+
+        elif "half_days" in semester_constraints:
+            cls_constraints["half_days"] = semester_constraints["half_days"]
+        
+        # Determine day_constraints for this class iteration
+        if "half_days" in cls_constraints:
+            day_constraints["half_days"] = cls_constraints["half_days"]
+
+        for sub, info in sorted_subjects_items:
             count = info["count"]
             sub_type = info.get("type", "THEORY")
 
@@ -203,26 +248,30 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                 t = None
                 
                 # We need to find a slot first to check teacher availability, or check teacher for potential slots?
-                # Strategy: For a randomly chosen slot (or loop over slots), check if ANY teacher is free.
-                
-                # This logic is slightly coupled with slot selection.
-                # Let's pick slots first, then find a teacher who is free in those slots.
+                # For labs, enforce Friday-only if constraint is set
+                if sub_type == "LAB" and "force_lab_day" in cls_constraints:
+                    if day != cls_constraints["force_lab_day"]:
+                        continue  # Skip non-Friday days for labs
                 
                 if sub_type == "LAB" and count >= 2:
                     # Lab needs 2 consecutive periods
-                    # Priority: P3-P6 (slots 2-5), fallback: P1-P2 (slots 0-1)
+                    # Valid pairs: (0,1)=P1-P2, (2,3)=P3-P4, (4,5)=P5-P6
+                    # NEVER (3,4) which spans lunch break between P4 and P5
                     
-                    # If we have a selected full day for labs, prefer it!
-                    if "selected_full_day" in semester_constraints and day == semester_constraints["selected_full_day"]:
-                         lab_slot_pairs = [(2, 3), (3, 4), (4, 5), (0, 1)] # Full range available
-                    elif day == "Fri" or (day in day_constraints.get("half_days", [])):
-                         # Half day: limit to P1-P4 (slots 0,1,2,3)
-                         # Max pair is (2,3)
-                         lab_slot_pairs = [(2, 3), (0, 1)] 
-                         # Note: (0,1) is P1,P2. (2,3) is P3,P4. P4 ends at slot 3.
+                    # If we have a forced lab day, ensure it's the full day
+                    if "selected_full_day" in cls_constraints and day == cls_constraints["selected_full_day"]:
+                        # Full lab day - prioritize afternoon slots P5-P6, then fallback
+                        lab_slot_pairs = [(4, 5), (2, 3), (0, 1)]  # Prefer P5-P6, never (3,4)
+                    elif day in day_constraints.get("half_days", []):
+                        # This is a half day - NO labs should be scheduled here at all!
+                        # Skip this day entirely for labs
+                        continue
+                    elif day == "Fri":
+                        # Friday default (if not set as half day) - limited slots
+                        lab_slot_pairs = [(2, 3), (0, 1)]
                     else:
-                        # Full day standard (Mon-Thu non-constrained)
-                         lab_slot_pairs = [(2, 3), (3, 4), (4, 5), (0, 1)]
+                        # Other full days (standard) - never include (3,4)
+                        lab_slot_pairs = [(2, 3), (4, 5), (0, 1)]
                     
                     random.shuffle(lab_slot_pairs)
                     
@@ -240,8 +289,12 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                             if available_teacher:
                                 # Allocate lab session
                                 classroom = get_available_classroom(
-                                    classrooms, sub_type, day, start, classroom_usage, sub
+                                    classrooms, sub_type, day, start, classroom_usage, sub, cls
                                 ) if classrooms else None
+                                
+                                if classrooms and not classroom:
+                                    continue # Skip if rooms defined but none available
+
                                 
                                 tt[cls][day][start] = {
                                     "subject": sub, 
@@ -272,7 +325,7 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                     
                 else:
                     # Theory needs 1 slot
-                    slots = allowed_slots(day, day_constraints) # Pass constraints here
+                    slots = allowed_slots(day, cls_constraints) # Pass class-specific constraints here
                     random.shuffle(slots)
                     
                     for i in slots:
@@ -287,8 +340,12 @@ def generate_random_timetable(classes, subjects, teachers, days, classrooms=None
                             
                             if available_teacher:
                                 classroom = get_available_classroom(
-                                    classrooms, sub_type, day, i, classroom_usage, sub
+                                    classrooms, sub_type, day, i, classroom_usage, sub, cls
                                 ) if classrooms else None
+
+                                if classrooms and not classroom:
+                                    continue # Skip if rooms defined but none available
+
 
                                 tt[cls][day][i] = {
                                     "subject": sub, 
